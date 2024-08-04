@@ -194,6 +194,21 @@ class Movie extends VideoOverlay
 				}
 			}
 
+			//https://qiita.com/alicey/items/ce18a1d21d2ea568fb52
+			opened = false;
+			if(mode == vomOverlay){
+			mode = vomMFEVR;
+			try{
+			super.open(storage);
+			opened = true;
+			}
+			catch(e){
+			dm("ムービーを Mixer モードで開くことができません : " + e.message);
+			dm("オーバーレイモードで開きます");
+			mode = vomOverlay;
+			}
+			}
+			
 			if(!opened)
 			{
 				super.open(storage);
