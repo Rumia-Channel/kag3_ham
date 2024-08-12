@@ -1,0 +1,3 @@
+Scripts.execStorage("macro/HideMenuBar.tjs");
+KAGLoadScript("macro/APimage.tjs");
+Scripts.execStorage("macro/TimeEffectOverride.tjs");

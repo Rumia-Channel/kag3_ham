@@ -1,0 +1,272 @@
+ボタンなどのTJS汎用パーツ群 KLayers
+
+1. はじめに：
+	このスクリプトは、ボタン・トグルボタン・チェックボックス・ラジオ
+	ボタンなど、汎用的に使用可能なパーツ群を提供する。セーブ・ロードに
+	対応しており、加えて汎用的なインターフェースで作成されているため、
+	これを使ってsystembuttonや右クリック設定画面・セーブロード画面などが
+	容易に作成できる…といいなぁ。
+
+2. 基本設計
+	自作クラスはKxxxxLayerという名前で作成される。これらのクラスは以下の
+	スケルトンに従って作成されている。これに従い、下のクラスリファレンス
+	では、ここで述べた property/methodについては言及しない。
+	
+	class 自作クラス extends KAGLayer(またはその派生レイヤ)
+	+ property:
+		var classid = "クラス名";
+		name	// ユーザがインスタンス毎に任意に設定可能なユニークID。
+			// コンストラクタで指定する。
+	+ method:
+		// コンストラクタ
+		function 自作クラス(window, parent, name=void, elm=void)
+			// elm でオプションが指定可能。指定しなくてもよい
+		function finalize()			// デストラクタ
+		function setOptions(elm)		// オプション設定
+			オプションelmは %[top:200, left:100 ] のように
+			辞書配列で指定
+		function assign(src)			// コピー
+		function store()			// セーブ
+			辞書配列を返す
+		function restore(dic)			// ロード
+			辞書配列(=dic)を返す
+
+3. パーツ概要
+	KLayer ............... 文字及び画像を表示するだけのレイヤー
+	KButtonLayer ......... ボタン。ButtonLayer から派生
+	KAnimButtonLayer ..... アニメーションボタン。普通のボタンとしても使用可
+	KToggleButtonLayer ... トグルボタン
+	KToggleButtonLayer ... トグルボタン
+	KCheckBoxLayer ....... チェックボックスボタン(トグルボタンと全く同じ)
+	KSliderLayer ......... スライダー
+	KRadioButtonLayer .... ラジオボタン
+	KMessageLayer ........ メッセージを表示可能なレイヤー(未実装)
+	KPannelLayer ......... 複数のパーツをその上に配置可能なレイヤー(未実装)
+	KScrollBar ........... Pannelにのみくっつくスクロールバー(未実装)
+
+4. パーツクラスリファレンス
+	property は setOptions() を通して設定可能。
+　・KLayer extends Layer
+	文字または画像を表示する。それだけのレイヤ。コールバックなどは
+	存在しない。
+　　+ options:
+	caption = ""
+		文字を表示する場合の、表示文字列。"[r]" をデリミタとして
+		改行を含んだ複数行を指定可能
+	captioncolor = 0
+		文字を表示する場合の、文字色
+	captionsize = 18
+		文字を表示する場合の、文字サイズ(dot)
+	captionalign = 'center'
+		文字表示横位置。left/center/right が指定可能
+	captionalign = 'center'
+		文字表示縦位置。top/center/bottom が指定可能
+	color = 0
+		文字を表示する場合の、背景色
+	graphic 
+		画像を表示する。これを指定すると、上の caption* は無効となる。
+
+　・KButtonLayer extends ButtonLayer
+	ボタンを実現する。
+　　+ options:
+	graphic
+		ボタングラフィックを指定する。これを指定すると、caption*は
+		無効となる。
+	countpage = true
+		[button] タグの countpage 参照
+	onclick
+		押された時に実行するTJSスクリプト文字列
+	clickse
+		押された時に鳴らす音ファイル名
+	clicksebuf = 0
+		押された時に鳴らす音のバッファ番号
+	clickstorage
+		押された時のジャンプ先KAGシナリオファイル
+	clicktarget
+		押された時のジャンプ先KAGシナリオターゲットラベル
+	onrelease  (ext という名前でも指定可能)
+		離された時に実行するTJSスクリプト文字列
+	releasese
+		離された時に鳴らす音ファイル名
+	releasesebuf = 0
+		離された時に鳴らす音のバッファ番号
+	releasestorage  (storageという名前でも指定可能)
+		離された時のジャンプ先KAGシナリオファイル
+	releasetarget  (targetという名前でも指定可能)
+		離された時のジャンプ先KAGシナリオターゲットラベル
+	onenter
+		ポインタが入った時に実行するTJSスクリプト文字列
+	enterse
+		ポインタが入った時に鳴らす音ファイル名
+	entersebuf = 0
+		ポインタが入った時に鳴らす音のバッファ番号
+	enterstorage
+		ポインタが入った時のジャンプ先KAGシナリオファイル
+	entertarget
+		ポインタが入った時のジャンプ先KAGシナリオターゲットラベル
+	onleave
+		ポインタが出た時に実行するTJSスクリプト文字列
+	leavese
+		ポインタが出た時に鳴らす音ファイル名
+	leavesebuf = 0
+		ポインタが出た時に鳴らす音のバッファ番号
+	leavestorage
+		ポインタが出た時のジャンプ先KAGシナリオファイル
+	leavetarget
+		ポインタが出た時のジャンプ先KAGシナリオターゲットラベル
+	showiocusimage = false
+		フォーカス時に専用画像を表示するかどうか。trueにした場合、
+		ボタン画像は normal/enter/click/focus の四つが横に並んだものと
+		みなされる。
+
+　・KAnimButtonLayer extends KButtonLayer
+	アニメーションボタンを実現する。アニメーションボタン画像は、通常の
+	ボタンに加え、縦方向にアニメーションパターンを配置した二次元画像で
+	ある。アニメーション画像ファイル名＋.bsd拡張子のアニメーション定義
+	ファイルを用意することで、ボタンのnormal/enter/click/(normalfocus)が
+	アニメーションできる。.bsd ファイルが存在しないときは、KButtonLayer
+	と全く同等に振舞う。
+　　+ options:
+	height = 32 or graphic が指定された場合はその高さ
+		ボタンの高さ。アニメーションボタンにする場合、縦横にパターンが
+		描画された画像を指定し、加えてボタンの実際の高さを明示的に
+		このheightで指定する必要がある。
+　　+ .bsd ファイル
+		*normal
+		*onclick
+		*onenter
+		*onfocus
+		
+
+　・KToggleButtonLayer extends KAnimButtonLayer
+	トグルボタンを実現する。実際は、ボタン前景の上レイヤと、ボタン背景の
+	下レイヤの二枚のレイヤで実現されており、チェックボックスと同じように
+	動作できるようになっている。
+	上レイヤの画像ファイルは横に以下が並ぶ。
+	　normal(unchecked)/checked/uncheckedonmouse/(uncheckedfocus)
+	下レイヤの画像ファイルは横に以下が並ぶ。
+	　normal(unchecked)/clicked/onenter/(uncheckedfocus)
+	KAnimButtonLayer から派生しているため、
+	上下レイヤはどちらもアニメーション可能。
+　　+ options:
+	basegraphic
+		ボタン背景(下レイヤ)の画像。KAnimButtonLayer と同じものが
+		指定可能。
+	basewidth
+		ボタン背景(下レイヤ)の幅。指定しなければ、ボタン前景(上レイヤ)
+		の幅(= width)と同じ。
+	baseheight
+		ボタン背景(下レイヤ)の高さ。指定しなければ、ボタン前景(上レイ
+		ヤ)の高さ(= height)と同じ。
+	basecolor
+		ボタン背景(下レイヤ)の色。def=0x80ffffff。graphicが指定され
+		れば無効
+	graphic
+		ボタン画像。
+	width = 32 or graphic が指定された時はその幅/3 or /4
+		ボタン前景(上レイヤ)の幅。
+	height = 32 or graphic が指定された時はその高さ
+		ボタン前景(上レイヤ)の幅。graphicが指定された場合は、
+		KAnimButtonLayerと同様に、縦幅は１パターンの縦幅を指定する。
+	oncheck
+		ボタンがチェックされた時に実行するTJSスクリプト文字列
+	checkse
+		ボタンがチェックされた時に鳴らす音ファイル名
+	checkbuf = 0
+		ボタンがチェックされた時に鳴らす音のバッファ番号
+	checkstorage または storage
+		トグルOn時のジャンプ先KAGシナリオファイル
+	chedkedtarget または target
+		トグルOn時のジャンプ先KAGシナリオターゲットラベル
+	onuncheck
+		ボタンのチェックが外れた時に実行するTJSスクリプト文字列
+	uncheckse
+		ボタンのチェックが外れた時に鳴らす音ファイル名
+	uncheckbuf = 0
+		ボタンのチェックが外れた時に鳴らす音のバッファ番号
+	uncheckstorage または storage
+		トグルOff時のジャンプ先KAGシナリオファイル
+	unchedkedtarget または target
+		トグルOff時のジャンプ先KAGシナリオターゲットラベル
+
+
+　・KSliderLayer extends KKAGLayer (+ Tab = KAnimButtonLayer)
+	スライダーを実現する。通常は二次元スライダー。スライダータブ
+	幅がスライダー幅と同一なら縦スライダー、タブ高さがスライダー
+	高さと同一なら横スライダーとなる。
+　　+ options:
+	vval = 0
+		現在の縦方向のスライダー値。0.0～1.0 の値をとる。
+	hval = 0
+		現在の横方向のスライダー値。0.0～1.0 の値をとる。
+	vstep = 0
+		縦方向スライダーの移動刻み幅。0 で無段階
+	hstep = 0
+		横方向スライダーの移動刻み幅。0 で無段階
+	basegraphic
+		スライダーのベース画像
+	tabgraphic
+		スライダータブの画像
+	tabcaption
+		スライダータブに表示する文字列(tabgraphicとは背反)
+	tabcolor
+		スライダータブに表示する文字列色(tabgraphicとは背反)
+	tabwidth
+		スライダータブの幅(tabgraphicが指定されるとそれに従う)
+	tabheight
+		スライダータブの高さ(tabgraphicが指定されるとそれに従う)
+	onchanged
+
+
+　・RadioButtonLayer
+	KToggleButtonLayer を上に配置し、排他的に一つが押されるラジオ
+	ボタンを実現する。
+
+　　+ options:
+	※KToggleButtonLayer のオプションがそのまま設定でき、それらは
+	　このレイヤ上の全てのボタンで共通となる。
+	graphic
+	color
+	top/left
+		
+	width/height
+		幅・高さを指定する。指定しなければ、配置するボタン位置に
+		より自動的に調整される。
+	buttonnum = 0
+		ボタン数を指定する
+	disttype = 'holizontal'
+		ボタンの配置タイプ(文字列)。`holizontal'(横並び) と
+		'vertical' (縦並び) の二種類が指定可能
+	space = 10
+		ボタンを配置する時の間隔
+	buttonopts
+		ボタンに設定するオプション配列(全ボタン共通)
+		KToggleButtonLayer のオプションをそのまま指定可能。
+	ibuttonspts = [ %[], %[], %[], ... ]
+		ボタンに設定するオプション配列(各ボタン個別)。
+		ボタン毎に別々の値を設定したい時に使用する。たとえば、
+		ボタン配置を vertical/holizontal にしない場合や、
+		ボタン画像を一つ一つ変更する場合など。
+		ボタン数分の辞書配列の配列として定義される必要が
+		あることに注意。
+	oncheck
+		KToggleButtonLayerのものと同一だが、この指定中の'index'
+		という文字列は、押されたボタンインデックス(0～num-1)に
+		置換される。"tf.func.onCheck(index)" と書いておき、
+		3 番ボタンが押されると、これは tf.func.onCheck(3) の
+		ように変換され、実行される。
+
+sf.KLAYERS_DEFABSOLUTE
+
+
+// このレイヤ以下の指定の名前を持つレイヤーを探す(一つだけ)
+function findLayer(name, baselayer=kag.fore.base)
+
+// このレイヤ以下の指定の名前を持つレイヤーを探す(配列で返す)
+function findLayers(name, baselayer=kag.fore.base)
+
+// 辞書配列に従って一つレイヤーを作成する
+function createLayer(dic, page='fore')
+
+// 辞書配列の配列に従って、複数のレイヤを一気に作成する
+function createLayers(ary, page='fore')

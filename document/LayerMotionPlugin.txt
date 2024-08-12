@@ -1,0 +1,241 @@
+LayerMotionPlugin
+
+1. はじめに
+	LayerMotionPluginは、指定レイヤの表示位置を時間に応じて変化させる
+	プラグイン。[move]タグと何が違うかというと、予め定義しておいた
+	モーション(移動アクション)を適用できること。たとえば、おじき、
+	てくてく歩く、ふわふわ浮く、などのアクションを予め定義しておき、
+	これを該当レイヤーに適用することで、そのレイヤーを定義通りに動かす
+	ことができる。
+
+2. 使用例
+	モーションデータは、以下のように定義する。モーションデータの座標は、
+	対象レイヤに対する相対値で指定する。また、モーションが終了しても、
+	このプラグインは元の座標には戻さない。
+	
+	[motion_define name="おじぎ" locatey="(50,1000,-2),(0,1000,1)"]
+	[motion_define name="てくてく" locatey="(-20,500,-2),(0,500,2)" loop=0]
+	[motion_define name="反復横飛10回" locatex="(200,500,-2),(0,500,2),(-200,500,-2),(0,500,2)" loop=10]
+	
+	おじぎします(wait=trueなので同期します)。[p][er]
+	[motion_start layer=0 page=fore name="おじぎ" wait=true]
+
+	てくてく歩きます(wait=falseなのでバックグランドで動きます)。[p][er]
+	[motion_start layer=0 name="てくてく" wait=false]
+	歩きを止めます。位置は最終位置になります。[p][er]
+	[motion_stop layer=0 page=fore]
+
+	反復横飛び開始！[p][er]
+	[motion_start layer=0 page=fore name="反復横飛10回"]
+	終了を待ちます。[motion_wait layer=0 page=fore]
+	止まりました。[p][er]
+
+3. 注意点
+	本プラグインのタグは、対象レイヤーを停止させた状態で使うこと。
+	対象レイヤーが[move]タグなどで動作中の場合、本プラグインは正しく動作
+	しない。[motion_start]タグが、現在の対象レイヤの座標を覚えているからで
+	ある。本プラグインのタグの動作が終了していれば、対象レイヤーを動かして
+	構わない。
+	レイヤモーションはレイヤ毎に複数指定可能であり、複数指定した場合は
+	それらを組み合わせた動作に変わる。もちろん、複数レイヤにそれぞれ
+	別のレイヤモーションを指定することも可能。
+
+4. トランジション
+	トランジションも可能。例えば、LayerMotionで動作させている
+	layer=0 page=foreを、トランジションしながら消去する場合は、
+	以下のように指定する。
+		[backlay]			; 裏画面にコピー
+		[motion_stop layer=0 page=back]	; 裏だけ停止(=モーション削除)
+		[layopt layer=0 page=back visible=0]
+		[trans method=crossfade time=2000]
+
+5. セーブとロード
+	モーション中のセーブは、その時点でのモーションの座標がセーブされ、
+	ロードするとそこから再開する。
+	例：[motion_define left=100 locatex="(100,1000,2),(50,500,-2)" loop=3]
+	というモーションが動作しており、次のセーブ可能ラベルを通過した時に
+	loop回数が二回目だった時は、left=150の位置でセーブされる。
+
+
+6. タグリファレンス
+	[motion_define name= left= top= locatex= locatey= loop= loopx= loopy=]
+	説明：	モーションデータを定義する。モーションデータは、横方向と
+		縦方向で別々に定義する。
+	引数：	name=モーションID
+			モーションIDを指定する。以降、このIDでモーション
+			データを参照できるようになる。同じIDで複数
+			[motion_define]された場合、最後のもので上書きされる。
+		left=初期X座標(絶対値)
+			指定しなければ現在の位置をそのままキープ
+		top=初期Y座標(絶対値)
+			指定しなければ現在の位置をそのままキープ
+		locatex=X座標パス
+			X座標のモーションパスを指定する。パスは三つの数値で
+			構成され、それぞれ「対象レイヤの元座標から相対座標」、
+			「移動にかかる時間(ms)」、「加速度([move]タグ参照)」を
+			表す。デリミタとして空白があってはならない。
+			"(100,1000,2),(-100,500,-2)"は、『X=100に1秒で加速度2で
+			移動、そこからX=-100に1秒で加速度-2で移動』を表す。
+			指定されていなければ、そのモーションではレイヤは
+			その方向に動かないことを表す。
+		locatey=Y座標パス
+			Y座標のモーションパスを同上。
+		loop=loop回数|1(def)
+			モーションのループ回数を表す。「おじぎ」なら
+			一度しか実行しないが、「てくてく」ならループしたい、
+			という場合に指定する。[motion_start]で一時的に上書き
+			することも可能。デフォルトは1。0で無限ループする。
+		loopx=X方向loop回数|1(def)
+			loopを上書き可能なX方向のloop回数。
+		loopx=Y方向loop回数|1(def)
+			loopを上書き可能なY方向のloop回数。
+
+	[motion_erase name=]
+	説明:	モーションデータを削除する。
+	引数:	name=モーションID
+			削除する対象のモーションIDを指定。動作中のモーションは
+			コピーされているので、動作中でも削除してよい。
+
+	[motion_start layer= page= left= top= name= loop= loopx= loopy= wait=]
+	説明:	モーションを開始する。
+	引数:	layer=対象レイヤ番号(0(def)～)
+			モーションを適用するレイヤ番号を指定する。
+		page=対象ページ(fore(def)|back)
+			モーションを適用するページを指定する。
+		left=開始時左上X座標(省略=現在の座標から)
+			モーション開始する座標を指定する。指定されていれば、
+			まずそこに移動してからモーションを開始する。指定されて
+			いなければ、現在のレイヤ表示位置からモーションを開始する。
+		top=開始時左上Y座標(省略=現在の座標から)
+			Y座標になっただけで後はleftと同じ。
+		name=モーションID
+			モーションIDを指定する。
+		loop=loop回数
+			モーションのloop回数を指定する。[motion_define]で
+			指定したものを、このmotionに限り上書きできる。
+		loopx=X方向loop回数|1(def)
+			loopを上書き可能なX方向のloop回数。
+		loopx=Y方向loop回数|1(def)
+			loopを上書き可能なY方向のloop回数。
+		wait=true|false(def)
+			モーションの終了を待つかどうかを指定する。デフォルト
+			では待つ。無限ループするモーションの時は必ずfalseに
+			しないと、そこから進まなくなってしまうので注意。
+	#	canskip=未実装
+
+	[motion_stop layer= page= name= lastpos=]
+	説明:	動作中のモーションを止める。
+	引数:	layer=対象レイヤ番号(0～)
+			voidで全レイヤが対象に。
+		page=対象ページ(fore|back)
+			モーションを適用するページを指定する。voidでfore|back共止める。
+		name=モーション名
+			voidで該当layer/pageに属する全てのモーションが対象に。
+		lastpos=true(def)|false
+			レイヤを最終位置に移動させるかどうか。最終位置とは、
+			そのモーションがスキップせず終了した時に到達する位置。
+			falseならこのタグが実行された時点での位置で停止する。
+
+	[motion_wait layer= page= name=]
+	説明:	モーションの終了を待つ。
+	引数:	layer=対象レイヤ番号(0～)
+			voidで全レイヤが対象に。
+		page=対象ページ(fore(def)|back)
+			モーションを適用するページを指定する。voidでfore|back共終る
+			のを待つ。
+		name=モーション名
+			voidで該当layer/pageに属するモーションが全て終るのを待つ
+	#	canskip=未実装
+
+	[motion_krkrmove layer= page= left= top= pathx= pathy= wait=]
+	説明:	KAGの[move]タグの代替品。モーションと組み合わせて使うことができる。
+	引数:	layer=レイヤ番号(0(def)～)
+		page=対象ページ(fore(def)|back)
+			モーションを適用するページを指定する。
+		left=移動開始X座標(省略可)
+		top=移動開始Y座標(省略可)
+		pathx=移動X座標。motion_defineのlocatexと同じ
+		pathy=移動Y座標。同上
+		wait=移動を待つかどうか、def=false
+
+	[motion_krkrmove_wait layer= page=]
+	説明:	[motion_krkrmove]の終了を待つ
+	引数:	layer=レイヤ番号
+			voidで全レイヤの終了を待つ
+		page=対象ページ(fore|back)
+			voidで全ページ(fore/back)の終了を待つ
+
+# 未実装
+#	[ochange layer= page= opa="(o,t),(o,t),..."]
+#	説明:	モーションと組み合わせて使うことができる[move]タグのもう一つの
+#		代替品。[move]タグは透明度を変化させることができるので、
+#		それ用に追加。
+
+	[motion_quake name= layer=0 page=fore time=300 hmax=10 vmax=10 speed=50 wait=false loop=1]
+	説明:	指定レイヤだけを揺らす。
+		実装方法は、最初にquakeアクションを作っておいてそれをなぞる
+		形になっている。いいのかな。
+	引数:	name=	モーション名(任意、指定しないと適当な値が自動指定される)
+		layer=	レイヤ番号。def=0
+		page=	対象ページ。def=fore
+		time=	揺らす時間(ms)。def=300(ms)
+		hmax=	ゆれの横方向への最大振幅(pixel単位), def=10
+		vmax=	ゆれの縦方向への最大振幅(pixel単位), def=10
+		speed=	揺らすスピード(ms), def=50
+		wait=	quakeの終了を待つかどうか, def=true
+		loop=	何度繰り返すか。0で無限。def=1
+		canskip=スキップ可能かどうか。def=true
+
+	[motion_jump name= layer= page= height=30 accel=2 time=300 staccel= edaccel= sttime= edtime= wait=false movex=0 accelx=0 loop=1]
+	説明：	指定レイヤをジャンプさせる。
+		指定レイヤにキャラクタを表示してたらジャンプしたように見える。
+		heightをマイナスの値にすると、おじぎとか頷きアクションにも
+		なる。
+	引数：	name=	モーション名(任意、指定しないと適当な値が自動指定される)
+		layer=	レイヤ番号。def=0
+		page=	対象ページ。def=fore
+		height=	ジャンプする高さ。def=30ドット
+		accel=	ジャンプ→飛び降りる時の加速度。def=2(-2と+2)
+		time=	ジャンプにかかる時間。def=300(ms)
+		staccel=ジャンプ時の加速度。def=-accel
+		edaccel=飛び降り時の加速度。def=accel
+		sttime=	ジャンプ時の時間。def=time/2
+		edtime=	飛び降り時の時間。def=time/2
+		wait=	ジャンプの終了を待つかどうか。def=false
+		movex=	ジャンプ中の横移動ドット。def=0(dot)
+		accelx=	ジャンプ中の横移動加速度。def=0
+		loop=何度繰り返すか。0で無限。def=1
+		canskip=スキップ可能かどうか。def=true
+
+	[motion_start_onetime layer=0 page=fore wait=true locatex= locatey= loop=1 loopx= loopy=]
+	説明：	ワンタイムのモーションを実行する。モーションはこのときだけ
+		登録され、この動作が終わると削除される。
+	引数：	layer=	レイヤ番号。def=0
+		page=	対象ページ。def=fore
+		wait=	ジャンプの終了を待つかどうか。def=false
+		locatex=X座標パス
+			[motion_define]参照
+		locatey=Y座標パス
+			[motion_define]参照
+		loop=何度繰り返すか。0で無限。def=1
+		loopx=X方向loop回数|1(def)
+			loopを上書き可能なX方向のloop回数。
+		loopx=Y方向loop回数|1(def)
+			loopを上書き可能なY方向のloop回数。
+		loop=何度繰り返すか。0で無限。def=1
+		canskip=スキップ可能かどうか。def=true
+
+L. 四方山
+	KAGの設計思想で唯一気に入らないのが、layerの制御部分。吉里吉里の
+	レイヤに拡大縮小・回転が無く、「レイヤデータを二次元上で変形する場合」
+	は、別レイヤを用意してその上にstretchやAffineを使って描画しなければ
+	ならない。このため、KAG上のレイヤで拡大縮小・回転を透過的に
+	実現するのが極めて難しくなっている。「透過的」というのは、例えば
+	[animstart]でアニメーションさせながら回転、とかそういうの。
+
+	で、ホントは拡大縮小・回転まで含めたプラグインを書きたかったのだけ
+	れど、それはCutInPluginに譲って、もう少し使いやすい、「レイヤデータを
+	二次元上で変形しない」モーションについてのみ、プラグインとして
+	実装することにした次第。これで結構レイヤに動きが出るので、
+	KAGEXで実現していたような、ぴょんぴょんやおじぎ等のアクションが、
+	KAGだけで比較的簡単に実現できるようになる。…ハズ。

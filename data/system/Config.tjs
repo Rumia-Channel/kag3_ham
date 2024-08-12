@@ -97,7 +97,7 @@ function KAGWindow_config()
 // 設定は意味がありません。
 // 横幅はピクセル単位で指定してください。たて幅は scWidth と scHeight の
 // 比と同じ比で自動的に計算されます。
-;thumbnailWidth = 120;
+;thumbnailWidth = 384;
 
 // ◆サムネイルの保存モード
 // サムネイルの保存モードを指定します。saveThumbnail を true に設定しないとこの
@@ -106,7 +106,7 @@ function KAGWindow_config()
 // 24 を指定すると 24bitフルカラービットマップで保存されます。
 // 256色ビットマップの方がファイルサイズを小さく抑えることができますが、
 // 画質は悪くなります。
-;thumbnailDepth = 8;
+;thumbnailDepth = 24;
 
 
 // ◆ データ名プレフィクス
@@ -141,7 +141,7 @@ function KAGWindow_config()
 // 簡単には読めないようなデータになるので、栞の圧縮は暗号化を
 // 兼ねています。
 // "" を指定すると栞の暗号化や圧縮はされません。
-;saveDataMode = "";
+;saveDataMode = "b";
 
 
 // ◆ 栞にマクロの情報を保存するかどうか
@@ -492,7 +492,7 @@ function MessageLayer_config()
 // 不透明度を指定します。メッセージ枠用の画像が指定されている場合は無効で
 // す。
 ;frameColor = 0x000000; // position タグの color 属性に相当
-;frameOpacity = 128;  // position タグの opacity 属性に相当
+;frameOpacity = 0;  // position タグの opacity 属性に相当
 
 
 // ◆ 左右上下マージン
@@ -509,10 +509,10 @@ function MessageLayer_config()
 // ◆ 初期位置
 // これらは、position タグのそれぞれ left top width height の属性に対応しま
 // す。
-;ml = 16;  // 左端位置
-;mt = 16;  // 上端位置
-;mw = 1920-16;   // 幅
-;mh = 1080-16;   // 高さ
+;ml = 0;  // 左端位置
+;mt = 0;  // 上端位置
+;mw = 1920;   // 幅
+;mh = 1080;   // 高さ
 
 
 // ◆ 自動改行/改ページ

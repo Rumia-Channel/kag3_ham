@@ -1,0 +1,59 @@
+// https://gist.github.com/miahmie/bf32552e0ea0daa7a052eea23241c29c
+// マウス移動時にフックを入れる
+function KAGWindow_onMouseMove(x, y, shift) {
+	if (isMain && fullScreen) {
+		// フルスクリーンで動的メニュー表示対応
+		if (y < 4) { // [XXX]どの程度の上部位置でメニューバーを出すか判定（適当に調整のこと）
+			if (!menu.visible) menu.visible = true;
+		} else {
+			if ( menu.visible) menu.visible = false;
+		}
+	}
+	return onMouseMove_orig(...);
+}
+// メソッド差し替え
+&KAGWindow.onMouseMove_orig = &KAGWindow.onMouseMove;
+&KAGWindow.onMouseMove = KAGWindow_onMouseMove incontextof null;
+
+// フルスクリーン変更時にフックを入れる
+property KAGWindow_fullScreen {
+	getter {
+		return fullScreen_orig;
+	}
+	setter(v) {
+		var old = fullScreen_orig; // 古いfullScreen状態
+		var restore;
+		if (isMain) {
+			if (v && !old) {
+				var iw = innerWidth, ih = innerHeight; // サイズを覚えておく
+				// ウィンドウ→フルスクリーンで状態を記録しメニュー表示を消す
+				this.__window_restore = [ menu.visible, iw, ih ];
+				menu.visible = false;
+				setInnerSize(iw, ih); // [XXX] menu.visibleを変更した直後のウィンドウサイズがおかしいので再設定する
+			} else if (!v && old) {
+				// フルスクリーン→ウィンドウでmenu.visibleを復帰する
+				restore = typeof this.__window_restore != "undefined" ? __window_restore : void;
+				menu.visible = restore[0] if (restore);
+			}
+		}
+		fullScreen_orig = v; // 更新する
+		if (restore) setInnerSize(restore[1], restore[2]); // [XXX]フルスクリーン前のサイズを復帰させる
+	}
+}
+
+// プロパティ差し替え
+&KAGWindow.fullScreen_orig = &KAGWindow.fullScreen;
+&KAGWindow.fullScreen = &KAGWindow_fullScreen incontextof null;
+
+// メニューの選択時にフックを入れる
+function KAGMenuItem_onClick() {
+	var r = onClick_orig();
+	// フルスクリーン中であればメニューバーを消す
+	if (isvalid this && owner && isvalid owner && typeof owner.isMain != "undefined" && owner.isMain && owner.fullScreen) {
+		owner.menu.visible = false;
+	}
+	return r;
+}
+// メソッド差し替え
+&KAGMenuItem.onClick_orig = &KAGMenuItem.onClick;
+&KAGMenuItem.onClick = KAGMenuItem_onClick incontextof null;

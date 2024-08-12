@@ -1,0 +1,69 @@
+# 今後、名前をTimeEffectじゃなくてEnvironmentEffectにしたい。ユキのあとで。
+
+TimeEffect
+
+1. はじめに
+	TimeEffectは、吉里吉里のLayerクラスに寄生して、元画像データに手を
+	加えずに、予め設定しておいた画像エフェクトを適用する。
+	どんな時に使うのかというと、「夜」「夕方」「回想」など、
+	シーン毎に画面を暗くしたり明るくしたり赤くしたりグレイスケールに
+	したりしたい時に使う。元画像を変更しなくても、Layerクラスの
+	パラメータ変更でそれを実現できるので便利だが、反面、「画面上に
+	均一でない変化を与える」(レンズフレア、夜画像の明かり追加等)は
+	できない。
+
+2. 使用方法
+	TimeEffectはLayerクラスに寄生するので、使用方法が少々複雑。
+	まず、scenario/Override.tjsを用意して、ここに以下の二行を追加する。
+		Plugins.link("layerExImage.dll");
+		KAGLoadScript( "TimeEffect.tjs" );
+	layerExImage.dllも使用するので、それをplugins/ディレクトリに
+	格納しておくこと。
+	あとは、first.ksの頭で以下を呼べばよい。
+		[call storage="Macro_TimeEffect.ks"]
+
+3. 使用例
+	デフォルトで、「(なし)」「夜屋外」「夜屋内」「回想」が使用できる。
+	[setCurrentTime time="夜屋外"]
+	と実行して時間情報を設定し、変更したいレイヤー(例えばlayer=0, fore)
+	に対して以下を実行すれば、
+	[setTimeEffect layer=0 page=fore]
+	指定レイヤーが自動的に夜の屋外っぽい明るさに変化する。
+	一気に実行するならこう。
+	[setTimeEffect layer=0 page=fore time="夜屋外"]
+	元に戻すにはこんな。
+	[setTimeEffect layer=0 page=fore time=""]
+	何故setCurrentTimeとsetTimeEffectを分けたのかというと、後で
+	別マクロに取り込むため。
+
+4. タグリファレンス
+	[setCurrentTime time=]
+	説明：	現在の時間情報を設定する。時間情報に対応する画像変換
+		パラメータは、現在TimeEffect.tjsの先頭に書き込まれていて
+		大層カッコ悪い。
+	引数：	time=時間情報
+		デフォルトでは「昼」「夜屋外」「夜屋内」「回想」が使用できる。
+		昼は通常、夜屋外は非常に暗い、夜屋内は少し明るい、回想は
+		セピア調、など。
+		これを指定するだけでは何も起こらないことに注意。
+
+	[setTimeEffect layer= page= obj= time]
+	説明:	指定レイヤの画像をsetCurrentTimeで指定した時間情報で更新する。
+		子レイヤも全て更新してしまうので、baseに対しては実行しちゃうと
+		全レイヤが影響を受ける。チウイ。
+	引数:	layer=レイヤID(def=0)
+		page=ページ(fore(def)|back)
+		obj=画像変換対象(char|bg(def))
+			「対象」とは、そのレイヤの属性である。TimeEffectは
+			画像変換する際に、同じ時間情報でも「キャラクタ用」
+			「背景用」などの別々の画像変換ルールを持つことが
+			できる。「夜屋外」などでキャラクタが潰れることを
+			防ぐため。
+			現在、charとbgが指定でき、それぞれキャラクタ用、背景用
+			の画像変換ルールを表す。TimeEffect.tjsの先頭を見ると、
+			それぞれ別のルールが設定されていることがわかる。
+		time=時間情報
+			指定されていると、ここから[setCurrentTime]を呼ぶ。
+			指定されていないときは[setCurrentTime]を呼ばないので、
+			以前の[setCurrentTime]の指定値を引き継ぐ。
+

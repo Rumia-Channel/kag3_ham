@@ -1,0 +1,183 @@
+/*------------------------------------------------------------------------------
+/		Copyright (C) サークル煌明	All Rights Reserved.
+/			MoveMouseCursorPlugin Ver.0.5X
+/-----------------------------------------------------------------------------*/
+@if(__MOUSECURSORMOVER_OBJECT_DEFINED__==0)
+@set(__MOUSECURSORMOVER_OBJECT_DEFINED__=1)
+
+@set(__MOUSECURSORMOVER_USE_TIMER__=1)
+class MouseCursorMover {
+	var layer;
+	var goalX, goalY, time, accel, force, maxpermit;	// set する変数群
+	var startX, startY, lastX, lastY;
+	var starttick;			// 開始時刻
+	var doing = false;
+	var afterfinish;
+
+@if(__MOUSECURSORMOVER_USE_TIMER__==1)
+	var timer;
+@endif
+
+	function MouseCursorMover(layer) {
+@if(__MOUSECURSORMOVER_USE_TIMER__==1)
+		timer = new Timer(onTimer, "");
+		timer.interval = 16;
+		timer.enabled = false;
+@endif
+	}
+
+	function finalize() {
+		afterfinish = void;
+		stop();
+	}
+
+	function set(elm) {
+		if(sf.notMoveCursorAtAll) return;	// 一切マウスを動かさない
+		if(elm.layer===void) return;		// レイヤ指定がないと始まらない
+		this.layer = elm.layer;
+
+@if(__MOUSECURSORMOVER_USE_TIMER__==0)
+		// マウスは同時に動かせない
+		if(doing) SharedContinuousHandler_HIobject.leave(this);
+@endif
+
+		starttick = System.getTickCount();
+		goalX =	elm.x;		// 到達予定 X 座標
+		goalY =	elm.y;		// 到達予定 Y 座標
+		time =	elm.time!==void ? elm.time	: sf.defCursorSpeed;	// 移動時間
+		accel =	elm.accel!==void ?	elm.accel :	false;
+		force =	elm.force!==void ?	elm.force :	false;	// 強制的に移動するか？
+	// 一単位内にこの値以上マウスが動かされると実行が停止する
+		maxpermit = elm.maxpermit!==void ? (int)elm.maxpermit :	(int)5;
+
+		startX = lastX = layer.cursorX;
+		startY = lastY = layer.cursorY;
+
+		afterfinish = elm.afterfinish if elm.afterfinish!==void;
+		if(typeof.afterfinish ==='String') afterfinish = afterfinish!;
+
+		if(elm.time==0) finish();
+
+		doing = true;
+@if(__MOUSECURSORMOVER_USE_TIMER__==0)
+		SharedContinuousHandler_HIobject.entry(this,10);	// 60fps
+@endif
+@if(__MOUSECURSORMOVER_USE_TIMER__==1)
+		timer.enabled = true;	// 開始
+@endif
+	}
+
+	function onTimer() {
+		var l = layer;
+		if(!l isvalid) {
+			stop();
+			return;
+		}
+		var past = System.getTickCount() - starttick;
+		if (past>time) {		// 終了状態に移行
+			finish();
+		} else if(!force && Math.abs(l.cursorX-lastX+l.cursorY-lastY)>=maxpermit) {
+		/* 1 マウスが許容量を超えて動かされていたら実行を止める */
+			stop();
+		} else if(!force && Math.abs(lastX-goalX+lastY-goalY)<=1) {
+		/* 2 すでに所定の位置に来ている(±1)のなら最終状態にする */
+			finish();
+		} else {
+			var per = calcPerAccel(past/time, accel);
+			lastX = int(startX-(startX-goalX)*per);	// 移動した位置X
+			lastY = int(startY-(startY-goalY)*per);	// 移動した位置Y
+			l.setCursorPos(lastX, lastY);
+		}
+	}
+
+	function finish() {
+		layer.setCursorPos(goalX, goalY);	// 最終位置
+		stop();
+	}
+
+	function stop() {
+		if(doing) {
+			doing = false;
+@if(__MOUSECURSORMOVER_USE_TIMER__==0)
+			SharedContinuousHandler_HIobject.leave(this);
+@endif
+@if(__MOUSECURSORMOVER_USE_TIMER__==1)
+			timer.enabled = false;	// 終了
+@endif
+			if(afterfinish!==void) afterfinish();
+			afterfinish = void;
+		}
+	}
+
+function calcPerAccel(per, accel) {
+	if(accel<=-2)
+		return per = 1.0 - Math.pow(1.0-per, -accel);
+	else if(accel>=2)
+		return per = Math.pow(per, accel);
+	else
+		return per;
+}
+
+/* ----------------------------------------------------------
+/ @SharedContinuousHandler sleep関連機能
+/--------------------------------------------------------- */
+	function onSleep( tick ) {
+		starttick += tick;
+	}
+}
+
+// 作ってしまう
+var MouseCursorMover = new MouseCursorMover();
+@endif
+
+if(typeof global.kag == "undefined" || typeof global.MoveMouseCursorPlugin_object != "undefined") {
+	return ;
+}
+
+class MoveMouseCursorPlugin extends KAGPlugin {
+	var window;				// Windowオブジェクト
+	var mover;
+	var doing;
+
+	function MoveMouseCursorPlugin(window) {
+		super.KAGPlugin();
+		this.window	= window;
+	}
+
+	function finalize() {
+		super.finalize(...);
+	}
+
+	function set(elm) {
+		elm.layer = kag.fore.base;
+		elm.afterfinish = this.finish;
+		MouseCursorMover.set(elm);
+		doing = true;
+	}
+
+	function finish() {
+		if(!this isvalid) return;
+		window.trigger("MoveMouseCursor");
+		doing = false;
+	}
+}
+// プラグインオブジェクトを作成し、登録する
+kag.addPlugin(global.MoveMouseCursorPlugin_object = new MoveMouseCursorPlugin(kag));
+
+/* マクロ登録 */
+kag.tagHandlers.movecursor = function(elm = %[]) {
+	if(!sf.notMoveCursorAtAll)	// マウスを動かして良いときだけ動かす
+		MoveMouseCursorPlugin_object.set(elm);
+	return 0;
+} incontextof kag;
+kag.tagHandlers.mc = kag.tagHandlers.movecursor;
+
+kag.tagHandlers.waitmovecursorstop = function(elm = %[]) {
+	if(MoveMouseCursorPlugin_object.doing) {
+		elm.name = "MoveMouseCursor";
+		elm.onskip = "MoveMouseCursorPlugin_object.MouseCursorMover.finish()";
+		elm.canskip = elm.canskip!==void ? elm.canskip : false;
+		return waitTrigger(elm);
+	}
+	else return 0;
+} incontextof kag;

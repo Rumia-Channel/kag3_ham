@@ -1,0 +1,247 @@
+ * { margin:0px; padding:0px; text-decoration:none; }
+
+body {
+	font-size:11pt;
+	line-height:125%;
+	margin: 0 auto;
+}
+
+section.contents {
+	margin-top:0.2em;
+	margin-left:0.1em;
+	padding:0.4em 0.4em 0em 0em;
+}
+
+footer, div.footer {
+	padding-top:0.1em;
+	font-size:8pt;
+	font-style:normal;
+	line-height:120%;
+}
+
+.header_title {
+	margin-top:0.1em;
+}
+
+.header_title h1 {
+	padding-top:0.3em;
+	padding-left:0.5em;
+	letter-spacing:1px;
+}
+
+.header_title .path {
+	bottom:0.1em;
+	right:0.5em;
+}
+
+.header_title .path span:before { content:" < "; }
+
+.header_title .top_rightside {
+	bottom:0.1em;
+	right:0.5em;
+	font-weight:bold;
+	font-size:12px;
+	letter-spacing:3px;
+}
+
+menu.topmenu li {
+	list-style-type:none;
+}
+
+menu.topmenu li a {
+	font-size:1.1em;
+	font-weight:bold;
+    margin-top:0.2em;
+    margin-bottom:0em;
+}
+
+h1 {
+	font-size:2.4em;
+}
+
+h2 {
+	font-size:1.80em;
+	letter-spacing:2px;
+	padding:0.20em;
+	margin:0.3em 3em 0.5em 0.3em;
+}
+
+h3 {
+	font-size:1.40em;
+	letter-spacing:1px;
+	padding:0.15em;
+	margin:0.3em 1em 0.3em 0.5em;
+}
+
+h4 {
+	margin:0em 4em 0.3em 0em;
+}
+
+a.link {
+	font-weight: bold;
+	text-decoration:underline;
+}
+
+a.link_new {
+	font-size:13pt;
+	font-weight: bold;
+	text-decoration:underline;
+}
+
+a.link:visited {
+	font-weight: bold;
+	text-decoration:underline;
+}
+
+/*	折りたためる「注」	*/
+div.collapsiblenote {
+	padding-left:0.8em;
+	margin:1em 2em;
+	font-size:8pt;
+	line-height:120%;
+}
+
+div.note_butt {
+	width:150px;
+	padding-left:0.5em;
+}
+
+div.note_off div.note_butt:before {content:"▼";}
+div.note_on div.note_butt { width:600px; }
+div.note_on div.note_butt:before {content:"▲";}
+
+
+ /*
+ ドロップダウンリスト
+ */
+ /* メインメニュー */
+nav.menu {
+    text-align:center;
+}
+menu ul li { margin-left:0em; }
+
+
+ /* ドロップダウンメニュー */
+menu.dropmenu menu.column1 {
+   line-height:1.5em;
+   font-weight:bold; 
+   padding-left:0.5em;
+   margin-left:3px;
+}
+
+menu.dropmenu menu.column1:before { content:"▼"; }
+
+ /* サブメニュー1段目 */
+menu.dropmenu menu.column1 ul {
+   list-style-type:none;
+   margin-top:3px;
+}
+menu.dropmenu menu.column1 ul li {
+  padding-left:6px;
+}
+menu.dropmenu menu.column1 ul li:hover {
+  padding-left:10px;
+  font-weight: bold;
+}
+
+/* DIALY */
+div.sayo  { margin:0em 0em 0em 0.3em; padding-left:0.3em; }
+div.kuko  { margin:0em 0em 0em 0.3em; padding-left:0.3em; }
+div.sei  { margin:0em 0em 0em 0.3em; padding-left:0.3em; }
+div.aya  { margin:0em 0em 0em 0.3em; padding-left:0.3em; }
+ /*
+table {  border-spacing:1px; }
+table th { text-align:left; width:10em; margin:0px 5px; }
+table td { font-size:10pt; }
+table a { font-weight:bold; }
+ */
+/*	「注」を作成	*/
+div.note {
+	padding-left:0.8em;
+	margin:1em 2em;
+	font-size:9pt;
+	line-height:120%;
+}
+
+div.renew {
+	padding-left:0.8em;
+	margin:1em 2em;
+	font-size:8pt;
+	line-height:120%;
+}
+
+div.dialynote {
+	padding-left:0.1em;
+	padding-bottom:0.2em;
+	font-size:10pt;
+	margin:0.5em 0em 0.5em 1em;
+	line-height:120%;
+}
+
+div.note span.notehead, div.dialynote span.notehead {
+	padding-left:1em;
+	padding-right:1.5em;
+	margin-left:0.5em;
+	line-height:120%;
+	font-weight: bold;
+}
+
+article.plugin  { margin:0em 0em 1em 2em; }
+
+article.plugin h3 { margin:0em 0em 0em -0.5em; }
+
+.m1  { margin:0em 0em 0em 1em; }
+.m2  { margin:0em 0em 0em 2em; }
+.m3  { margin:0em 0em 0em 3em; }
+.m4  { margin:0em 0em 0em 4em; }
+
+div.aa {
+	/* AA表示用。コピペ */
+	font-family: IPAMonaPGothic,'ＭＳ Ｐゴシック',sans-serif;
+	font-size :16px;
+	line-height: 18px;
+}
+
+section.banner {
+	margin-top:0.1em;
+	padding:5px 5px 5px 5px;
+}
+
+section.banner div.link {
+	margin-bottom:0.2em;
+	margin-left:0.2em;
+	margin-right:0.2em;
+}
+
+section.banner div.link a.home {
+	margin-top:-0.5em;
+	margin-bottom:-0.1em;
+	font-size:9pt;
+}
+
+section.banner span.note {
+	margin-left:1em;
+	font-size:9pt;
+}
+section.banner span.note:before {content:"(";}
+section.banner span.note:after {content:")";}
+
+/* - 小物 - */
+div.tag {
+	font-size:9pt;
+	font-weight:bold;
+}
+
+ul { list-style-type:square; }
+
+dd { margin:0em 2em; }
+
+
+div.dl {
+	font-weight: bold;
+	margin:0em 2em 0em 0em;
+}
+
+li { margin-left:2em; }
+
+img { margin:2px; }

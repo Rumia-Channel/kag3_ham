@@ -1,0 +1,168 @@
+YesNoDialogLayer概要
+	YesNoDialogLayerは、半透明を含む不定形ダイアログをレイヤで表示する。
+	KAG標準の YesNoDialog.tjs はウィンドウであったためそのようなダイア
+	ログを表示できないので作った。
+
+使い方：
+	KAG標準の終了ダイアログや確認ダイアログを変更したい場合は、以下の手順で
+	使用する。
+	1. 以下の画像ファイルをKAGが検索可能などこか(image/フォルダなど)に
+	   作成する
+		YesNoDialog.png ................. Yes/Noダイアログ画像
+		YesNoDialog_YesButton.png ....... Yesボタン画像
+		YesNoDialog_NoButton.png  ....... Noボタン画像
+		(以下はdispOKLayer()を実行しないならなくてもよい)
+		OKDialog.png .................... OKダイアログ画像
+		OKDialog_OKButton.png ........... OKボタン画像
+	2. first.ks の先頭でYesNoDialogLayer.ksを以下のようにして読み込む
+		[call storage=YesNoDialogLayer.ks]
+
+	これで、以下の項目のダイアログを上の画像に変更できる。
+		・ゲーム終了時
+		・栞読み込み時
+		・栞書き込み時
+		・「最初に戻る」時
+		・「一つ前に戻る」時
+
+	デフォルトでは、画面中央にマウスカーソルを移動する。
+	移動したくないのであれば、TJSで以下を実行する。
+	.ImageDialogLayerPlugin_obj.setOptions(%[movecursor:false]);
+	移動先マウスカーソルの座標は、以下で指定する。
+	.ImageDialogLayerPlugin_obj.setOptions(%[movecursorx:X座標, movecursory:Y座標]);
+	※ただし、これらの値は現状ではセーブされないため、ゲーム開始時
+	　最初に設定して、以降変更しないこと。
+	
+	おまけで、サークル煌明様の MoveMouseCursorPlugin が先に読み
+	込まれていれば、これを使うようにしてある(暫定、要チェック)
+
+注意点：
+	・表示中もコンダクタ止めたりしないので、自動読み進みなどの処理は
+	　もりもり進むことに注意。止めた方がいいのかな。
+	・表示順位(default absolute)=100000000。変更したい場合はsetOptions()で
+	　指定する必要がある。
+	・動画再生中には、本プラグインを無効化する必要がある場合がある。
+	　オーバーレイ再生中は、動画はレイヤの最前面に表示されるので、
+	　ダイアログがレイヤで実現されていると、動画上に表示できないため。
+	　レイヤーモードで動画を再生するなら気にしなくてよい。
+	・もっと言えば、「終了しますか？」を表示した後にオーバーレイ動画再生
+	　を開始すると、動画が終わるまでどうしようもなくなってしまう…。
+	・表示時にメニューをdisableするのが遅かったので、男らしく、defaultでは
+	　メニューを disable するのはやめた。もうちょっと早くならんかこれ。
+	・askYesNo()を使うと、このプラグインを経由しないダイアログが表示
+	　される。askYesNo() の代わりに下で述べる askYesNoLayer() を使うように
+	　変更すると、このプラグインを使って Yes/No を選択させることができる。
+
+KAGタグリファレンス
+[askyesno message=]
+説明：	メッセージを表示し、Yes/Noを聞く。結果は
+	.ImageDialogLayerPlugin_obj.lastyesno に true/false で格納される。
+	Yes/No ボタンが押されるまで返ってこない
+
+[askok message=]
+説明：	メッセージを表示し、OK ボタンを表示する。
+	OK ボタンが押されるまで返ってこない
+
+
+*****************************************************************************
+TJSスクリプトからの使い方：
+ユーザは「実体」の方で呼び出す
+
+クラス:	ImageDialogLayerPlugin
+実体：  global.ImageDialogLayerPlugin_obj
+説明：	不定形ダイアログレイヤを実現するクラス
+
+
+関数:	ImageDialogWindow.setOptions(elm)
+実体:	global.ImageDialogLayerPlugin_obj.setOptions(elm)
+機能:	ダイアログにオプションを指定する。表示されているダイアログではなく、
+	以降表示するダイアログのオプションとなる。
+引数:	elm	ダイアログオプションの辞書配列。現在は以下が指定可能。指定
+		しなかった場合はデフォルトが使用される
+	elm.enabled		ダイアログをレイヤ表示するかどうか(def=true)
+				enabled=falseの時は、デフォルトダイアログが
+				表示される
+	elm.image		ダイアログ画像ファイル名(def=YesNoDialog.png)
+		// 以下、default値はメッセージレイヤ0の設定に従う
+	elm.menudisable		ウインドウ上部のメニューをdisableするか(def=false)
+	elm.fadetime		ダイアログをフェード表示する時間(def=200(ms))
+
+	elm.font.face		フォント名(def=defaultFace)
+	elm.font.angle		フォント傾き(def=横書き時=0、縦書き時=2700)
+	elm.font.bold		太字かどうか(def=defaultBold)
+	elm.font.height		フォントサイズ(def=defaultFontSize)
+	elm.font.antialiased	アンチエイリアス(def=defaultAntialiased)
+	elm.font.color		フォント色(def=defaultChColor)
+	elm.font.opacity	フォント透明度(def=255)
+		// 以下、メッセージレイヤ0がedgeなのかshadowなのかでdefが変化
+	elm.shadow.level	文字影の不透明度(255/512)
+	elm.shadow.color	文字影の色(def=defaultShadowColor/defaultEdgeColor)
+	elm.shadow.width	文字影の幅(def=0/1)
+	elm.shadow.offsetx	文字影のオフセットX座標(def=0/2)
+	elm.shadow.offsety	文字影のオフセットY座標(def=0/2)
+		//
+	elm.message.alignx	ダイアログ中のメッセージ揃え横位置
+				c=center(def), l=left, r=right
+	elm.message.aligny	ダイアログ中のメッセージ揃え縦位置
+				c=center(def), t=top, b=bottom
+	elm.message.left	メッセージ領域のダイアログ左端からの位置
+				(def=20)
+	elm.message.top		メッセージ領域のダイアログ上端からの位置
+				(def=20)
+	elm.message.width	メッセージ領域の横幅(def=dialog幅-left*2)
+	elm.message.height	メッセージ領域の縦幅(def=dialog幅-top*2)
+	elm.message.vertical	メッセージを縦書きにするかどうか
+
+	elm.yesbutton.left	yesボタンのX座標(def=210)
+	elm.yesbutton.top	yesボタンのY座標(def=105)
+	elm.yesbutton.image	yesボタンの画像(def=YesNoDialog_YesButton)
+
+	elm.nobutton.left	noボタンのX座標(def=270)
+	elm.nobutton.top	noボタンのY座標(def=105)
+	elm.nobutton.image	noボタンの画像(def=YesNoDialog_NoButton)
+
+	elm.okbutton.left	okボタンのX座標(def=240)
+	elm.okbutton.top	okボタンのY座標(def=105)
+	elm.okbutton.image	okボタンの画像(def=OKDialog_OKButton)
+
+
+関数:	askYesNoLayer(message, yesfunc,yesparam, nofunc,noparam, elm)
+実体:	global.ImageDialogLayerPlugin_obj.askYesNoLayer(message, yesfunc,yesparam, nofunc,noparam, elm)
+機能:	Yes/Noダイアログを表示する。KAGのMainWindow.tjsから呼ばれたりする。
+	この関数は必ずfalseを返し、KAGはこの関数が失敗した(=Noが押された)かのように
+	動作する。実際にはその後にダイアログレイヤを表示し、後にレイヤ上で
+	yesが選択されるとyesfuncを、noが選択されるとnofuncを実行する。
+	yesfunc/nofunc実行直前にダイアログは消去される。
+返値:	false
+引数:	message	表示するメッセージ文字列。
+	yesfunc	Yesボタンが押された時に実行されるTJS関数。引数を一つだけ
+		もてる。省略(=void)すると何もしない
+	yesparam上のyesfunc関数に渡される引数。省略するとvoidが渡される
+	nofunc	Noボタンが押された時に実行されるTJS関数。引数を一つだけ
+		もてる。省略(=void)すると何もしない
+	noparam	上のyesfunc関数に渡される引数。省略するとvoidが渡される
+	elm	上のsetOptions()に渡される
+
+
+関数:	dispOKLayer(message, okfunc, okparam, elm)
+実体:	global.ImageDialogLayerPlugin_obj.dispOKLayer(message, okfunc,okparam, elm)
+機能:	OKダイアログを表示する。
+	この関数は必ずfalseを返し、KAGはこの関数失敗した(キャンセルされた)かのように
+	動作する。実際にはその後にダイアログレイヤを表示し、後にレイヤ上で
+	okが選択されるとokfuncを実行する。
+	okfunc実行直前にダイアログは消去される。
+返値:	false
+引数:	message	表示するメッセージ文字列。
+	okfunc	Yesボタンが押された時に実行されるTJS関数。引数を一つだけ
+		もてる。省略(=void)すると何もしない
+	okparam上のyesfunc関数に渡される引数。省略するとvoidが渡される
+	elm	上のsetOptions()に渡される
+
+四方山：
+	拙作YesNoImageDialogは極力吉里吉里/KAGの仕組みを変えずに半透明を
+	実現したが、アレはどうあってもウィンドウだったため、「Yesボタンを
+	画面外に出した状態(全体の半分が画面外の状態)で[X]ボタン押して終了
+	しようとすると、絶対終了できない状態になる」のであった。それを
+	防ぐためにレイヤ版を作ってみたわけで。
+	一部エラーチェックを省いてしまったりしているので、それをどうするかが
+	今後の課題。あとオーバーレイモードの動画再生中に元のを使わないと
+	いけないのが辛いというかなんというか。

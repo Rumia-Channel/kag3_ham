@@ -1,0 +1,126 @@
+html {
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+
+body {
+	clear:both;
+	width:810px;
+}
+
+section.contents {
+	position:relative;
+	float:left;
+	width:800px;
+	min-height:400px;
+	overflow:hidden;
+}
+
+footer, div.footer {
+	clear:both;
+	text-align:right;
+}
+
+.header_title {
+	position:relative;
+	height:50px;
+}
+
+.header_title h1 {
+	float:left;
+	position:absolute;
+}
+
+.header_title .path {
+	float:right;
+	position:absolute;
+}
+
+.header_title .top_rightside {
+	float:right;
+	position:absolute;
+}
+
+nav.header {
+    width:100%;
+    text-align:left;
+}
+
+menu.topmenu {
+	display: inline-block;
+	vertical-align: middle;
+	text-align:center;
+}
+
+menu.topmenu li {
+   float:left;
+}
+
+menu.topmenu li a {
+/*108pxで7*/
+	min-width:130px;
+	max-width:130px;
+	display:inline-block;
+}
+
+/*	折りたためる「注」	*/
+div.note_on div.collapsiblenote { display:auto; }
+div.note_off div.collapsiblenote { display:none; }
+
+
+ /* ドロップダウンメニュー */
+menu.dropmenu {
+	display: inline-block;
+}
+
+menu.dropmenu menu.column1 {
+   width:240px;
+   display: inline-block;
+   text-align: left;
+}
+menu.dropmenu menu.column1:hover {
+  position:relative;
+}
+
+ /* サブメニュー1段目 */
+menu.dropmenu menu.column1 ul {
+   display:none;
+   width:240px;
+   position:absolute;
+}
+
+menu.dropmenu menu.column1:hover > ul { display: block }
+
+menu.dropmenu menu.column1 a {
+  display: inline-block;
+  width:100%;
+}
+
+.topimage {
+  position: absolute;
+  bottom:2%; right:2%;
+  border:none;
+}
+
+section.banner {
+	position:relative;
+	float:left;
+	width:795px;
+	min-height:50px;
+}
+
+section.banner div.link {
+	float:left;
+	width:210px;
+}
+
+section.banner div.link a.home {
+	float:right;
+}
+
+p.right { text-align: right; }
+
+div.dl {
+	text-align:right;
+}
+

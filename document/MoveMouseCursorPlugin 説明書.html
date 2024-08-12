@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+	<meta name="author" content="Sayo Nogami">
+	<link rel="stylesheet" href="./html/base.css" type="text/css" title="サークル煌明_標準スタイルシート" />
+	<link rel="stylesheet" href="./html/prasentation.css" type="text/css" />
+	<link rel="stylesheet" href="./html/colors.css" type="text/css" />
+	<title>サークル煌明 MoveMouseCursorPlugin 説明書</title>
+</head>
+<body>
+
+<header>
+<nav class="header_title">
+	<h1>MoveMouseCursorPluginプラグイン説明書</h1>
+	<span class="top_rightside">サークル煌明</span>
+</nav>
+</header>
+
+<!-- CONTENTs -->
+<section class="contents">
+<h2>目次</h2>
+<OL>
+<LI><a class="link" href="#h2_howtouse">MoveMouseCursorPluginプラグインの使い方・機能</a></LI>
+<LI><a class="link" href="#tag_top">タグ</a></LI>
+<LI><a class="link" href="#h2_example">使用例</a></LI>
+<LI><a class="link" href="#h2_notice">注意事項</a></LI>
+</OL>
+
+
+<h2 id="h2_howtouse">使い方</h2>
+<div class="m3">
+　ダウンロードしていただいたファイルを解凍すると、以下のファイルが出てきます。<br />
+○1 MoveMouseCursorPlugin 説明書.html (このファイル)<br />
+○2 MoveMouseCursorPlugin.tjs (プラグイン本体)<br />
+　first.ks の @iscript 中に、<br />
+	<div class="tag"><div class="m2">
+	@iscript<br />
+	　　Scripts.execStorage("MoveMouseCursorPlugin.tjs");<br />
+	@endscript
+	</div></div>
+と書いてください。 MoveMouseCursorPlugin が読み込まれます。<br />
+　これで下準備は完了です。<br />
+</div>
+
+<h2 id="tag_top">タグ名</h2>
+<div class="m1">
+	<LI><a class="link" href="#tag_m_movecursor">@movecursor</a></LI>
+	<LI><a class="link" href="#tag_m_waitmovecursorstop">@waitmovecursorstop</a></LI>
+<h3 id="tag_m_movecursor">@movecursor</h3>
+　マウスカーソルの移動を行います。<br />
+<div class="note">
+x : 移動後のX座標です。画面左上端が 0 で、右にいくほど大きくなります<br />
+y : 移動後のY座標です。画面左上端が 0 で、下にいくほど大きくなります<br />
+time : 移動する時間を設定します。大きな値を設定するとゆっくりと動きます<br />
+accel : 加速度を持った移動を行うかどうかを設定します。2 以上を指定すると徐々に動きが速く、-2 以下だと徐々に動きは遅くなります。<br />
+force : trueを指定すると、timeで設定した時間が経つまでユーザはマウスを動かせません。<br />
+maxpermit : ユーザーがマウスを移動した際に、移動量の X、Y 合計がこの値以上だと実行を停止します<br />
+</div>
+
+<h3 id="tag_m_waitmovecursorstop">@waitmovecursorstop</h3>
+　移動が終わるのを待ちます。略記として @wmc で記述も可能です。<br />
+<div class="note">
+canskip : スキップ可能か
+</div>
+
+</div>
+
+
+<h2 id="h2_example">使用例</h2>
+<div class="m1">
+<div class="tag">
+　@MoveCursor x=80 y=60 time=1000 accel=-5<br />
+　@WaitMoveCursorStop
+</div>
+　1秒間かけて(80,60)へと移動します。accel が -5 なので、視覚的には初速が最大でブレーキを掛けながら進んでいる感じです。<br />
+<br />
+
+<div class="tag">
+　@MoveCursor x=80 y=60 time=1000 accel=-5<br />
+　@MoveCursor x=640 y=480 time=2000<br />
+　@WaitMoveCursorStop
+</div>
+2 秒間かけて(640,480)へと移動します(標準サイズの画面では右下)。<br />
+ひとつめの @MoveCursor タグの直後にまた @MoveCursor があるので、ひとつめは実行されません。<br />
+<br />
+
+<div class="tag">
+　@MoveCursor x=80 y=60 time=1000 force=true<br />
+　@WaitMoveCursorStop
+</div>
+　forceにtrueを指定しているので、1000ミリ秒経つまでユーザはマウスを動かすことができません。<br />
+<br />
+
+</div>
+
+
+
+<h2 id="h2_notice">注意事項</h2>
+<div class="m1">
+　0.5X より KAG プラグイン部分とマウスを動かす部分を切り離したので、TJS からマウス移動を呼ぶことが出来ます。<br />
+　例えば ButtonLayer 内で<br />
+	<div class="tag"><div class="m2">
+	MouseCursorMover.set(%[layer:this, x:width/2, y:height/2, time:300, accel:-4]);<br />
+	</div></div>
+　と書くと、マウスがボタンの中央に移動します。<br />
+　ウィンドウ内の座標ではなく layer に指定したレイヤに対する座標を取っているので、ウィンドウ内でのボタンの位置は関係有りません。<br />
+　オブジェクトの名前は MouseCursorMover で、set は辞書配列をとります。layer を指定しないと動かないので注意して下さい。<br />
+<br />
+　タグ実行時には背景レイヤの位置を取得してそれを元に動かしているので、@quake タグ使用時にマウスも一緒に揺れるかも（未検証）<br />
+<br />
+　所定位置まで移動する、もしくは移動中にユーザーがマウスを動かした場合に実行を停止する機能が付いています。(0.4X より)<br />
+<br />
+</div>
+
+<div class="collapsiblenote">
+　吉里吉里 2.32 以降での動作確認をしています。明記されている場合を除き、それ以前のバージョンでの動作は保証しません。<br />
+　このプラグインを使用した結果生じたあらゆる障害、損害について、サークル煌明は一切の責任を負いません。<br />
+　改変、再配布は自由です。また製作物にこのプラグインを使用していることを表示する義務はありません。<br />
+　しかし「サークル煌明」の名前、もしくはこのプラグインを使用している旨をどこかに書いておいてもらえると、作者は大層喜びます。<br />
+</div>
+
+
+</div>
+</section>
+<!-- !CONTENTs -->
+
+<!-- MENU, AddRESS, OTHERs -->
+<?php include("address.txt"); ?>
+<!-- !MENU, AddRESS, OTHERs -->
+
+<!-- GOOGLE-ANALYTICS -->
+<?php include("google-analytics.txt"); ?>
+<!-- !GOOGLE-ANALYTICS -->
+</body>
+</html>

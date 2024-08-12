@@ -1,0 +1,155 @@
+はじめに：
+	FaceWindowPluginは、ゲーム画面でフェイス(表情)ウインドウ(...メッセージ
+	ウィンドウの左端とかに発言しているキャラクタの顔部分を表示するアレ)を
+	表示するためのプラグインである。NameWindowPluginと組で使うとシヤワセ？
+
+使い方：
+	FaceWindowPlugin.ksとTJSFunctions.ksとKLayers.ksをdata/scenario/
+	あたりのフォルダに放り込んで、first.ksの先頭で
+		[call storage=FaceWindowPlugin.ks]
+	を実行する。すると、以下に定義するタグが使用できるようになる。
+	＜使用例＞
+		; ここから初期化
+		[facewin_init layer=2]
+		[facewin_setopt left=100 top=100 width=100 height=50 visible]
+		[facewin_regpos name=アキコ srcleft=32 srctop=52]
+		; ここまで初期化
+
+		[image storage=我輩 layer=3 page=fore]
+		[facewin_disp storage=我輩顔]
+		「我輩は我輩である。名前はまだない」
+		[p][cm]
+
+		[facewin_clear]
+		我輩が現れた！
+		[p][cm]
+
+		[image storage=アキコ layer=4 page=fore]
+		[facewin_disp srclayer=4 name=アキコ]
+		; ↑[facewin_disp srclayer=4 srcleft=32 srctop=52]と同じ
+		「お前も蝋人形にしてやろうか！」
+		[p][cm]
+
+注意事項：
+	・
+	・srclayerで指定したレイヤー上のKAGのセルアニメなどは、フェイスウィン
+	　ドウ上でもコピーしたものが動作する。
+	・KAGのセルアニメ領域は alphastorage で指定した不透明度=255以外の
+	　領域にかからないようにした方がいい。かかると、「あとから貼ったなぁ」
+	　というのがバレバレになる
+	・srclayer=を指定するとあるレイヤを参照するが、これはコピー元として
+	　一度参照するだけで、その後にそのレイヤの画像が変更された場合に
+	　自動的にコピーしなおされるわけではない。srclayer= の画像が変更
+	　された場合、再び[facewin_disp]する必要があり、しないと、ロード後に
+	　表示される顔画像がセーブ時と異なる、ということが起こりえる。
+
+タグリファレンス：
+[facewin_init layer=1]
+機能：	フェイスウィンドウを初期化する。指定されたフェイスウィンドウはクリア
+	される。
+オプション：
+	layer=1(def)
+		使用する前景レイヤを指定する。page指定できないので注意。
+	他、[facewin_setopt]の全てのオプションが使用可能
+
+[facewin_uninit]
+機能：	フェイスウィンドウを開放する。指定されていたフェイスウィンドウは
+	クリアされる。
+オプション：
+	なし
+
+[facewin_setopt ctclear=false cmclear=false alphastorage= ...]
+機能：	フェイスウィンドウの各種設定。ここで指定されたものは次回省略時の
+	デフォルト値になる。
+オプション：
+	ctclear=true|false(def)
+		[ct]タグで、currentの顔画像を消去するかどうか
+	cmclear=true|false(def)
+		[cm]タグで、currentの顔画像を消去するかどうか
+	alphastorage=
+		顔画像にomMultiplicativeで重ね合わせる画像ファイルを指定する。
+		顔画像を単純な矩形ではなく周囲をぼかしたい時などに使用する。
+		指定すると表示ごとにoperateRect()するため少し重くなるので注意。
+		画像サイズは↓のwidth/heightと同一でなければならない
+	left=0 top=0 width=160(def) height=120(def)
+		フェイスウィンドウの大きさを指定する。表裏どちらのウィンドウも
+		同時にサイズ変更されるので注意。また、サイズ変更すると
+		いずれのウィンドウもクリアされる。
+	srcpage=, srcleft=, srctop=, srcwidth=, srcheight=
+		[facewin_disp]参照。
+	trans*(def: transmethod=crossfade, transtime=100)
+		[facewin_disp]や[facewin_clear]で[trans]に渡す引数を指定する。
+	この他[layopt]のパラメータが指定可能(opacity/visible/autohideなど)
+
+[facewin_regpos name= srcleft= srctop=]
+機能：	フェイスウィンドウにコピーする座標を、name=で指定できるよう登録する
+	詳細は[facewin_disp]のname=パラメータ参照。
+オプション
+	name=	指定座標を引っ張り出すための名前
+	srcleft=/srctop=
+		name=に対応するsrcleft/srctop
+
+[facewin_disp ...]
+機能：	フェイスウィンドウ上に顔画像を表示する。transが指定されていればtrans
+	する。page=fore|bothの場合はtransせずに両方に書き込み、すぐに返る。
+	加えて、[facewin_setopt]の属性も全て指定可能。
+	※デフォルトでは100msで[trans]を利用して表示する。引数は全て
+	　[trans]に渡すことに注意
+オプション：
+	storage=
+		表示する顔画像ファイル。srclayerと背反指定
+	srclayer=
+		表示する顔画像を、指定されたレイヤから切り取って貼り付ける
+		場合の元レイヤを指定する。そのレイヤの画像が変更されると
+		ロード時にフェイスウィンドウが復旧できないため、レイヤの画像
+		が変更されたら[facewin_disp]や[facewin_clear]などで
+		フェイスウィンドウを現在のレイヤ状態に合わせる必要がある
+	srcpage=fore(def)|back
+		表示する顔画像を、指定されたレイヤから切り取って貼り付ける
+		場合の元ページを指定する。指定を省略すると、前回指定された
+		ものが指定される
+	srcleft=, srctop=
+		srclayer= が指定されていた時の、コピー元レイヤの座標を
+		指定する。指定を省略すると、前回指定されたものが指定される
+	page=fore|back(def)|both
+		顔画像を表示する対象ページを指定する。transすると裏に書いた
+		ものが表に出てくることに注意(だからdef=back)。
+	stoptrans=true(def)|false
+		[trans]前に[stoptrans]するかどうか
+	backlay=true(def)|false
+		falseだと、このタグ中で[backlay]しなくなる
+	trans=true(def)|false
+		falseだと、このタグ中でtransしなくなる。page=fore|both
+		だと、trans=trueでも[trans]を実行しない
+	method=crossfade(def)
+		[trans]する時のmothodを指定
+	time=100(def)
+		[trans]にかける時間
+	wait=true(def)|false
+		[trans]を[wt]で待つかどうか
+	canskip=true(def)|false
+		[wt]する時にcanskipを有効にするかどうか
+	name=	[facewin_regpos]で登録済みの、対応する srcleft/srctop を
+		コピー元レイヤの座標として指定する。上の srcleft=、srctop= が
+		指定されていた場合はそちらを優先する。
+
+	これ以外に[facewin_setopt]のオプションすべてが指定可能
+備考：
+	transせずに単純に顔画像を表示するだけなら以下のように指定すればよい。
+		[facewin_disp srclayer=1 srcpage=fore page=fore]
+	デフォルトで[trans]した方がいいかどうか悩みどころ…。
+
+[facewin_clear page=]
+機能：
+	フェイスウィンドウに表示されている画像を消去する。
+	内部的には、[facewin_disp * storage=&void srclayer=&void]を実行
+	している。従って、[facewin_disp]の引数は storage/srclayer 以外全て
+	指定可能。
+オプション：
+	[facewin_disp]の(storage/srclayerを除く)オプションすべてが指定可能
+備考：
+	transせずに単純に顔画像を消去するだけなら以下のように指定すればよい。
+		[facewin_clear page=fore]
+	デフォルトで[trans]した方がいいかどうか悩みどころ…。
+	これは、画像をクリアしていて効率が悪い。もしも単純に消すだけなら、
+	[facewin_setopt] で visible=false を指定した方がいい

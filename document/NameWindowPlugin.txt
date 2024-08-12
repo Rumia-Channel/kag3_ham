@@ -1,0 +1,142 @@
+はじめに：
+	NameWindowPluginは、ゲーム画面でネームウインドウを表示するための
+	プラグインである。
+	ほら、よくゲームであるやん、名前が表示される部分がテキスト表示
+	部分と別のヤツ。アレを簡単に作りたい、というのが開発動機。
+
+使い方：
+	NameWindowPlugin.ksとTJSFunctions.ksをdata/scenario/あたりの
+	フォルダに放り込んで、first.ksの先頭で
+		[call storage=NameWindowPlugin.ks]
+	を実行する。すると、以下に定義するタグが使用できるようになる。
+	＜使用例＞
+		; ここから初期化
+		[namewin_init layer=message1]
+		[namewin_position left=100 top=100 width=100 height=50 mrginl=0 marginr=0 margint=8 marginb=0 visible]
+		[namewin_style align=center]
+		[namewin_font color=0xffff00]
+		; ここまで初期化
+
+		[namewin_text text=我輩]
+		「我輩は我輩である。名前はまだない」
+		[p][cm]
+
+		[namewin_clear]
+		我輩が現れた！
+		[p][cm]
+
+		[namewin_text text=アキコ]
+		「お前も蝋人形にしてやろうか！」
+		[p][cm]
+
+中身の話：
+	[namewin_init]のlayer=で、使用するメッセージレイヤを指定する。
+	指定されたメッセージレイヤは、[cm][ct]でもテキストがクリアされない
+	ようにフックされる。
+
+制限：
+	・一行しか表示できない。
+	・表示領域があふれると、ページ切り替え待ちになってしまう
+	・[namewin_font]でフォントサイズや色は変更できるけれど、表示する
+	　テキストの途中で変更することはできない
+	・初期状態でmessage1がNameWindowとして登録([namewin_init layer=message1])
+	　されている。次に[namewin_init]で別のレイヤを登録すると、message1が
+	　クリアされ、非表示(visible=false)にされちゃうので注意…。
+
+
+タグリファレンス：
+[namewin_init layer=message1]
+機能：	ネームウィンドウを初期化する。指定されたネームウィンドウはクリア
+	される。
+オプション：
+	layer=message1(def)
+		使用するメッセージレイヤを指定する。メッセージレイヤ以外は
+		指定できないので注意。
+	他、[namewin_setopt]の全てのオプションが使用可能
+
+[namewin_uninit]
+機能：	ネームウィンドウを開放する。指定されていたネームウィンドウは
+	非表示となる。
+オプション：
+	なし
+
+[namewin_setopt ctclear= cmclear= history=]
+機能：	ネームウィンドウの各種設定
+オプション：
+	ctclear=true|false
+		[ct]タグで、表示しているテキストを消去するかどうか
+	cmclear=true|false
+		[cm]タグで、表示しているテキストを消去するかどうか
+	history=true|false
+		表示したテキストを履歴に表示するかどうか
+	他、[namewin_position]と[namewin_style]の全てのオプションが使用可能
+
+
+[namewin_position ...]
+機能：	ネームウィンドウに対し、[position]タグの属性を指定する。
+	[position]タグの属性は(layer=を除き)全て指定できる。
+オプション：
+	以下URL参照
+	http://devdoc.kikyou.info/tvp/docs/kag3doc/contents/Tags.html#position
+	注意すべきは以下二つ
+	page=both(def)|fore|back ★省略すると'both'(=foreとbaseを両方設定)
+	visible= ★最初にこれtrueにしないと見えないので注意
+
+[namewin_style ...]
+機能：	ネームウィンドウに対し、[style]タグの属性を指定する。
+	[style]タグの属性は全て指定できる。
+オプション：
+	以下URL参照
+	http://devdoc.kikyou.info/tvp/docs/kag3doc/contents/Tags.html#style
+	注意すべきは以下。page=は存在しないことに注意。
+	reset=true|false(def) ★trueで[resetstyle]同等
+
+[namewin_font ...]
+機能：	ネームウィンドウに対し、[font]タグの属性を指定する。
+	[font]タグの属性は全て指定できる。
+オプション：
+	以下URL参照
+	http://devdoc.kikyou.info/tvp/docs/kag3doc/contents/Tags.html#font
+	注意すべきは以下。page=は存在しないことに注意。
+	reset=true|false(def) ★trueで[resetfont]同等
+
+[namewin_text text= ...]
+機能：
+	ネームウィンドウ上に文字列を表示する。transが指定されていればtrans
+	する。page=fore|bothの場合はtransせずに両方に書き込み、すぐに返る。
+	加えて、[namewin_font]および[namewin_setopt]の属性も全て指定可能。
+	※デフォルトでは100msで[trans]を利用して表示する。引数は全て
+	　[trans]に渡すことに注意
+オプション：
+	text=表示する文字列
+	page=fore|back(def)|both
+		文字列を表示する対象レイヤを指定する。transすると裏に書いた
+		ものが表に出てくることに注意。
+	backlay=true(def)|false
+		falseだと、このタグ中で[backlay]しなくなる
+	trans=true(def)|false
+		falseだと、このタグ中でtransしなくなる。page=fore|both
+		だと、trans=trueでも[trans]を実行しない
+	method=crossfade(def)
+		[trans]する時のmothodを指定
+	time=100(def)
+		[trans]にかける時間
+	wait=true(def)|false
+		[trans]を[wt]で待つかどうか
+	canskip=true(def)|false
+		[wt]する時にcanskipを有効にするかどうか
+	これ以外に[namewin_font]と[namewin_setopt]のオプションすべてが指定
+	可能。ただし、color=は[namewin_font]にのみ指定され、[namewin_setopt]
+	には指定されない。
+備考：
+	transせずに単純に文字を表示するだけなら以下のように指定すればよい。
+		[namewin_text text=表示文字 page=fore]
+	デフォルトで[trans]した方がいいかどうか悩みどころ…。
+
+[namewin_clear]
+機能：
+	ネームウィンドウに表示されているテキストを消去する(フレームは
+	消去しない)。内部的には、[namewin_text text=""]を実行している。
+	従って、[namewin_text]の引数は text= 以外全て指定可能。
+オプション：
+	[namewin_text]の(text=を除く)オプションすべてが指定可能

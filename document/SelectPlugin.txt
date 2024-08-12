@@ -1,0 +1,379 @@
+選択肢を簡単に表示する [SelectPlugin]
+
+はじめに：
+	吉里吉里/KAGでカッコいい選択肢表示するのって結構面倒だ。だもんで、
+	もうちっと簡単にできんもんかしらと思って作ってみたのがこちら。
+	KAGEXのselopt/seladd/sellect/seldoneとかも参考に。
+	※だったらKAGEXでいいやんと言うなかれ。
+
+使用方法：
+	first.ksの先頭で以下のようにしてプラグインを読み込む。
+		[call storage=SelectPlugin.ks]
+	あとは以下のようにすれば選択肢ボタンを表示し、選択できる。
+		[select_start]
+			[select_button text=選択肢１ target=選択肢１選択]
+			[select_button text=選択肢２ target=選択肢２選択]
+			[select_button text=選択肢２ target=選択肢２選択]
+		[select_end]
+
+		*選択肢１選択:
+		選択肢１が選択されました
+		[s]
+		*選択肢２選択:
+		選択肢２が選択されました
+		[s]
+		*選択肢３選択:
+		選択肢３が選択されました
+		[s]
+
+画面構成：
+	画面は、「背景」「タイトル」「ボタン」の三つのレイヤから構成される。
+	これらはベースレイヤ(kag.fore.base)の子レイヤとして作成され、
+	メッセージ画面の上に表示される。これらは相互にはいずれも親子関係には
+	なく、座標にも相関なく配置される(※背景とは別の場所にボタンを配置する
+	などが可能)。従って、bgleft/bgtop, ttitleleft/titletop、btnleft/btntop
+	などはいずれもbaseに対する座標。
+
+ボタン画像：
+	ボタンは、テキスト＋KAGのボタン画像(normal/click/enterを─連結)を
+	読みこせることができる。画像は必須ではなく、指定しなければテキスト
+	ボタンになる。
+	ボタンには上の三つに加えdisabled(無効化)とselected(一度選択されてた)
+	状態があり、それぞれ別の画像を与えることができる。
+	ボタン画像を読み込ませるには、三つのパターンを混在させることができる。
+		1. 画像を指定しない(適当なボタンっぽいものを表示する)
+		2. KAGボタン(横に三つ並んだ形式)を指定する
+		3. disableとselectedを追加する
+		4. normal/click/enterを一枚一枚ばらばらに指定する
+	ボタンに対し画像を一枚でも指定すると、その画像に従ってボタン縦横サイズ
+	は自動的に調整される。画像のない部分は適当にボタンっぽいものが表示
+	される
+
+注意事項：
+	選択肢表示中にはセーブできない。[select_star]から[select_end]までの
+	間にはセーブ可能ラベルを置かないこと。…いや、実は選択肢表示中に
+	セーブ可能にもできるんだけど、メリット少ないから。
+
+
+タグリファレンス：
+
+[select_start]
+説明:	選択肢登録を開始する。
+引数:	★commonjumpstorage=
+		[select_commonjump]タグでジャンプする先のストレージ
+		[select_commonjump]を使わないなら指定しなくてよい
+		指定しないで[select_commonjump]を実行すると、同じストレージ中の
+		指定targetへjumpする
+	★commonjumptarget=
+		[select_commonjump]タグでジャンプする先のターゲット
+		[select_commonjump]を使わないなら指定しなくてよい
+	★page=back(def)|fore|both
+		ボタンを表示するページを指定する。fore/bothの場合はトランジ
+		ションを利用してボタンを表示しない
+	backlay=true(def)|false
+		選択肢表示はトランジションを使う。このため、事前に[backlay]
+		されている必要がある。デフォルトでは[select_start]中で
+		[backlay]する。ただし、page=fore/bothだと[backlay]しない
+
+	その他、[select_opt] の全ての引数が設定可能。ただし、ここで指定した
+	ものは [select_opt] で指定したものと違い、この選択肢でのワンショット
+	でのみ使われる。
+
+
+[select_end]
+説明:	選択肢登録を終了、そこまでに登録したボタンを再配置して、[s]で入力
+	待ちになる。
+引数:	★stop=true(def)|false
+		最後に[s]を実行するかどうか。普通は実行するのだが、まぁ…
+		しない場合も用意しとこうかなーって。
+
+[select_opt]
+説明:	選択肢全体または背景のオプションを指定する。このマクロで指定した
+	ものが、デフォルトオプションとして使用される。
+	※したがって、このオプションは[select_start]の前に指定すること。
+引数:
+	// ここからセレクト画面開始に関わる属性 ///////////////////////////////
+	opense=
+		選択肢が開始された時に鳴らす音
+	openbuf=0
+		選択肢が開始された時に鳴らす音のバッファ
+	★onopen=
+		選択肢が開始された時に実行するTJSスクリプト
+	★opencallstorage=
+	★opencalltarget=
+		選択肢開始字に共通で実行されるKAGサブルーチンの開始ラベル。
+		[return]で終了している必要あり。
+	★opentransargs=
+		選択肢表示時の[trans]タグに渡される引数群。辞書として渡すので
+		: だったり , だったり注意が必要。
+		＜例＞
+		opentransargs="time:200, method:crossfade"
+		※これがデフォルト値
+	★hidemsg=true|false(def)
+		選択肢表示時、メッセージレイヤを非表示にするか否か。
+		(クリアはしないので、非表示でも選択肢終了すると再表示される)
+
+	// ここからセレクト画面終了(=選択し終えた後)に関わる属性 ////////////
+	clsese=
+		選択肢を選択し終えた時に鳴らす音
+	closesebuf=0
+		選択肢を選択し終えた時に鳴らす音のバッファ
+	★onclose=選択肢を選択し終えた時に実行するTJSスクリプト
+	★closecallstorage=
+	★closecalltarget=
+		選択肢終了後に選択肢ジャンプする前に全選択肢で共通で
+		実行されるKAGサブルーチンの開始ラベル。[return]で終了
+		している必要あり。
+	★closetransargs=
+		選択肢終了時の[trans]タグに渡される引数群。辞書として渡すので
+		: だったり , だったり注意が必要。
+		＜例＞
+		closetransargs="time=200 method=crossfade"
+		※これがデフォルト値
+
+	// ここからセレクト画面開始・終了前後に関わる属性 ////////////////////
+//	autokeep=true(def)|false
+//		autoモードで選択肢に到達した場合、選択後もautoモードを有効に
+//		するか否か　※KAGはデフォルトで有効だったのでここでは実装しない
+	★skipkeep=true(def)|false
+		skipモードで選択肢に到達した場合、選択後もskipモードを有効に
+		するか否か
+	★clearmsg='before'|'after'(def)|'none'
+		選択肢表示前または後にメッセージレイヤを[cm]でクリアするか
+		※clearmsg=before でない限り、選択肢表示中にはセーブできない
+		　ことに注意、
+
+	// ここからセレクト画面の背景に関わる属性
+	★bggraphic=
+		背景画像を指定する。これが指定されると、width/heightは無視
+		される。指定されないとbgcolor=に従う
+	★bgcolor=0(def)
+		背景の色を指定する。0xAARRGGBB。
+	★bgleft/bgtop
+		ゲーム画面に対する背景の位置を指定する。def=0,0
+	★bgwidth/bgheigth=画面縦横幅
+		背景の大きさを指定する。def=画面いっぱい
+		※またはgraphicが指定された場合は画像の大きさ
+	★bgabsolute=kag.current.absolute+1(def)
+		背景の表示優先順位
+
+	★titlegraphic=
+		選択肢タイトルを表示する場合のタイトル画像を指定する。def=なし
+	★titletext=
+		選択肢タイトルを表示する場合のタイトル文字列を指定する。
+		def=なし
+	★titletexthalign=center(def)|left|right
+	★titletextvalign=center(def)|top|bottom
+	★titleleft/titletop=
+		選択肢タイトルを表示する場合のタイトル位置を、bgleft/bgtopからの
+		相対座標で指定する。def=0
+	★titlewidth/titleheight=
+		選択肢タイトルを表示する場合のタイトルサイズを指定する。
+		def=32(textの時のみ。titlegraphicを読み込むと自動的にその
+			サイズに変更される)
+	★titlefont="face: , color: , size: , ... "
+		選択肢タイトルのフォントを指定する。def=kag.currentと同じ。
+		指定方法についてはボタンのnormalfont参照。
+	★titlecolor=0x00000000(def)
+		titlegraphicがない場合の背景色を指定する。0xAARRGGBB。
+
+	// ここからセレクト画面のボタン配置に関わる属性 ///////////////////////
+	※ボタンのleft/topが指定されていない場合、ボタンはここで指定する
+	領域上に自動的に配置される。
+	★barealeft=20(def)
+		ボタン領域のbgleftからの左上相対X座標
+	★bareatop=20(def)
+		ボタン領域のbgtopからの左上相対Y座標
+	★bareawidth=画面横幅-40(def)
+		ボタン領域横幅
+	★bareaheight=画面横幅-40(def)
+		ボタン領域縦幅
+	★bhalign=expand(def)|center|right(=top)|left(=bottom)
+		横方向のボタン位置のアライン。
+		expandは縦書き時のみ有効、bspaceを無視して領域一杯に
+		ボタンを配置する。横書き時はexpand = center.
+		ただし、[select_button]にleftが指定されると無視される
+	★bvalign=expand(def)|center|top|bottom
+		縦方向のボタン位置のアライン。
+		expandは横書き時のみ有効、bspaceを無視して領域一杯に
+		ボタンを配置する。縦書き時はexpand = center.
+		ただし、[select_button]にtopが指定されると無視される
+	★bspace=20(def)
+		ボタンの配置間隔(横書きなら縦間隔、縦書きなら横スペース)
+	★vertical=true|false(def=テキスト画面のvertical)
+		縦書きかどうか。縦書きなら、ボタンは右から左へ縦書きで配置
+		される。プラグイン読み込み時に初期化され、それに合わせて
+		ボタンのwidth/heightは初期化されるので、「本文は横書き、
+		選択肢は縦書き」などの時は、ボタンのwidth/heightを適当に
+		設定する必要があることに注意。
+
+	// ここからボタンの共通属性 //////////////////////////////////////////
+	頭にbtnをくっつけたbtnXXXXXXXという名前で、[select_button_opt]で指定
+	できる全てのアトリビュートが指定可能。ここで指定した値は、
+	[select_button]のデフォルト値となる。
+
+
+[select_button]
+説明:	選択肢を登録する。登録しただけでは表示されず、[select_end]して初めて
+	画面上に表示される。
+引数:
+	★selectname=
+		選択肢の名前。選択すると、sf.selecthash[selectname]と
+		f.selecthash[selectname]に選択回数が記録される。
+	★left=	ボタンの表示左上X座標 ... 省略するとbarea*中に自動配置される
+	★top=	ボタンの表示左上Y座標 ... 同上
+	★flag=	選択された場合に、指定された変数 = true とする。
+	★text=	選択肢として表示するテキスト(def=なし)
+	★enabled=選択肢を有効にするかどうか。def=true(有効)。無効の場合は
+		無効の画像(横連結の場合四番目(一番右))が表示される。
+	★selected=
+		選択済みとするかどうか。def=sf.selecthash[selectname]
+
+	このほか、[select_button_opt] の全ての引数が設定可能。ただし、ここで
+	指定したものは [select_button_opt] で指定したものと違いワンショット
+	でのみ使われる。
+	※実は上の引数も、[select_button_opt]で使える。でもそれを固定
+	してしまうとあんまり意味がなさそうな気がする。
+
+
+[select_button_opt]
+説明:	ここで指定した値は、[select_button]のデフォルト値となる。
+	※従って、[select_start]前までに設定されていなければならない
+
+引数:
+	★width=	ボタンの横幅(def=横書きならbareawidth, 縦書きなら32)
+	★height=	ボタンの縦幅(def=横書きなら32, 縦書きならbareaheight)
+
+	★absolute=
+		選択肢ボタンの表示優先順位(def=[select_opt]のabsolute+2)
+	★storage=選択された時にjumpする先のシナリオストレージ名。省略すると
+		現在のストレージ内。
+	★target=	選択された時にjumpする先のシナリオラベル名。省略すると
+		storage=の先頭から
+		※storageもtargetも無い場合は、[select_start]のstorageと
+		　targetにjumpする
+
+	// 以下は*graphicが指定されていないボタンで有効(混在可能、縦横は
+	// 自動的に*graphicの画像に合わせる)
+	★normalcolor=0xff404040(def)
+これはnormalcolorの方がいいかも
+		通常(マウスが乗っていない)時のボタン色
+	★selectedcolor=normalcolorのRGBそれぞれx3/4(def)
+		一度選択されたボタンの通常時の色。一度選択されても色を変更
+		しないのであれば、selected=false とするか、この色を
+		normalcolorと同じにすること
+	★disablecolor=0x80202020(def)
+		無効化されているボタン色
+	★entercolor=0xff909090
+		マウスがボタン上にある時のボタン色
+	★clickcolor=0xffd0d0d0
+		マウス押した時のボタン色
+	// ここまで graphicと背反
+
+	★graphic=
+		ボタンのベース画像(def=指定なし)。
+		normal/click/enter の三枚が横に並んだ画像を指定する。
+//	allgraphic=	未実装
+//		ボタンのベース画像(def=指定なし)
+//		normal/click/enter/disale/selected の五枚が横に並んだ画像を
+//		指定する。
+	★normalgraphic=
+		マウスが乗っていない時のボタン画像(def=指定なし)
+		graphic/allgraphicと背反。
+	★disablegraphic=
+		ボタンが無効化された時の画像(def=指定なし)。押せない。
+		指定しなければ、normalgraphicがそのままdisableとして利用される
+	★selectedgraphic=
+		マウスが乗っていない時の、選択済みボタン画像(def=指定なし)
+	★entergraphic=
+		マウスが乗った時のボタン画像(def=指定なし)
+		graphic/allgraphicと背反。
+	★clickgraphic=
+		マウス押した時のボタン画像(def=指定なし)
+		graphic/allgraphicと背反。
+	★graphickey=0xffffff
+		グラフィックの抜き色(def=指定なし、0xRRGGBB)
+		
+	★normalfont="face:XX, color:XX, size:XX, bold:XX, italic:XX, ..."
+		通常(マウス無い)時のボタンフォント
+		def=このプラグインが読み込まれた時のkag.fore.messages[0]と同じ
+		この引数はそのままTJSの辞書配列として扱われるため、= ではなく
+		: を指定し、区切り文字が','であることに注意。また、:の後ろには
+		TJS式をそのまま記述可能。
+		face:		フォント名
+		color:		フォント色(0xRRGGBB)
+		height:		フォントサイズ
+		bold:		太字か否か(true/false)
+		italic:		斜体か否か(true/false)
+		opacity:	フォントの透明度(def=255)
+		antialiased:	文字のぼかし具合
+		shadowlevel:	影のレベル(255とか512とか)
+		shadowcolor:	影付き文字の影の色(0xRRGGBB)
+		shadowwidth:	影付き文字の影のぼかし具合
+		shadowoffsetx:	影付き文字の影の横オフセット
+		shadowoffsety:	影付き文字の影の横オフセット
+		＜記述例＞
+		[select_button text=いち target=*いち normalfont="face:'ＭＳ 明朝', color:0xff0000, height:64"]
+		※なんで','で区切ってるのかというと、半角スペースで最初区切って
+		たんだけど、設定値中に' 'を含むもの(例：face='ＭＳ 明朝')の時
+		困る(真面目に字句解析しないと処理できない)ことがわかったため。
+		前後に %[ ] を追加すればそのままTJSスクリプトになるように
+		指定する必要があったのです。
+	★selectedfont="face: color: size: bold: italic: ..."
+		一度選択されたボタンのボタンフォント
+		def=normalfontと同じだが、colorだけはRGBそれぞれ*3/4される
+	★disablefont="face: color: size: bold: italic: ..."
+		マウスがボタン上にある時のボタンフォント
+		def=normalfontと同じ
+	★enterfont="face: color: size: bold: italic: ..."
+		マウスがボタン上にある時のボタンフォント
+		def=normalfontと同じ
+	★clickfont="face: color: size: bold: italic: ..."
+		マウス押した時のボタンフォント
+		def=normalfontと同じ
+	★onclick=
+		選択肢が押された時に実行する動作(TJS文字列)
+	clickse=
+		選択肢が押された時に鳴らす音
+	clicksebuf=0
+		選択肢が押された時に鳴らす音のバッファ
+	★onrelease(またはexp)=
+		選択肢が離された時に実行する動作(TJS文字列)
+	releasese=
+		選択肢が離された時に鳴らす音
+	releasesebuf=0
+		選択肢が離された時に鳴らす音のバッファ
+	★onenter=
+		選択肢にポインタが入った時に実行する動作(TJS文字列)
+	enterse=
+		選択肢にポインタが入った時に鳴らす音
+	entersebuf=0	
+		選択肢にポインタが入った時に鳴らす音のバッファ
+	★onleave=
+		選択肢からポインタが出た時に実行する動作(TJS文字列)
+	leavese=
+		選択肢からポインタが出た時に鳴らす音
+	leavesebuf=0
+		選択肢からポインタが出た時に鳴らす音のバッファ
+
+	★texthalign=center(def)|left|right
+		選択肢テキストのアライン横位置
+	★textvalign=center(def)|top|down
+		選択肢テキストのアライン縦位置
+	★textleft=(def=0)
+		選択肢テキスト領域のボタン上のX位置
+	★texttop=(def=0)
+		選択肢テキスト領域のボタン上のY位置
+	★textwidth=(def=width)
+		選択肢テキスト領域の横幅
+	★textheigth=(def=height)
+		選択肢テキスト領域の縦幅
+
+
+[select_commonjump]
+	最後に実行した選択肢[select_start]で指定されていたstorageとtargetに
+	ジャンプする。
+
+ToDo:
+	制限時間付きにするかどうか
+
