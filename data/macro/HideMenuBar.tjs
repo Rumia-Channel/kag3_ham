@@ -29,7 +29,7 @@ property KAGWindow_fullScreen {
 				// ウィンドウ→フルスクリーンで状態を記録しメニュー表示を消す
 				this.__window_restore = [ menu.visible, iw, ih ];
 				menu.visible = false;
-				setInnerSize(iw, ih); // [XXX] menu.visibleを変更した直後のウィンドウサイズがおかしいので再設定する
+				(global.Window.setInnerSize incontextof this)(iw, ih); // [XXX] menu.visibleを変更した直後のウィンドウサイズがおかしいので再設定する
 			} else if (!v && old) {
 				// フルスクリーン→ウィンドウでmenu.visibleを復帰する
 				restore = typeof this.__window_restore != "undefined" ? __window_restore : void;
@@ -37,7 +37,7 @@ property KAGWindow_fullScreen {
 			}
 		}
 		fullScreen_orig = v; // 更新する
-		if (restore) setInnerSize(restore[1], restore[2]); // [XXX]フルスクリーン前のサイズを復帰させる
+//		if (restore) setInnerSize(restore[1], restore[2]); // [XXX]フルスクリーン前のサイズを復帰させる
 	}
 }
 
