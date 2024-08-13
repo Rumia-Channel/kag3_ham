@@ -100,8 +100,8 @@
 @endscript
 [call storage="macro/TJSFunctions.ks"]
 [call storage="macro/KLayers.ks"]
-[call storage=macro/NameWindowPlugin.ks]
-[call storage="macro/Macro_CharLayers.ks"]
+;[call storage=macro/NameWindowPlugin.ks]
+;[call storage="macro/Macro_CharLayers.ks"]
 [call storage="macro/AltEnterFullScreen.ks"]
 [call storage="macro/YesNoDialogLayer.ks"]
 [call storage="macro/SelectPlugin.ks"]
