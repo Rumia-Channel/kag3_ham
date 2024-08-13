@@ -709,7 +709,7 @@ class CharLayers extends CharDatas {
 [eval exp="mp.layers = '1 2 3'" cond="mp.layers === void"]
 [eval exp="mp.layerary = mp.layers.split( / / )"]
 [if exp="+mp.layerary[0]+mp.layerary.count > kag.numCharacterLayers"]
-	[eval exp="System.inform('[char_init]に指定した layers="'+mp.layers+'" が、kag.numCharacterLayers(='+kag.numCharacterLayers+')より少ない。data/system/Config.tjs の numCharacterLayers を確認せよ')"]
+	[eval exp="System.inform('[char_init]に指定した layers='+mp.layers+' が、kag.numCharacterLayers(='+kag.numCharacterLayers+')より少ない。data/system/Config.tjs の numCharacterLayers を確認せよ')"]
 [endif]
 [eval exp="kag.addPlugin(global.chardatas_obj = new CharLayers(mp.layerary))"]
 [char_clear_all]

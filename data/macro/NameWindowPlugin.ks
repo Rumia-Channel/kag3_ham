@@ -50,7 +50,7 @@ class NameWindow extends KAGPlugin {
 	{
 		// 初期化。ここでやらないと onRestore() で使うので
 		this.w   = w;
-		layer    = "message0";	// 参照するメッセージレイヤ名
+		layer    = "message1";	// 参照するメッセージレイヤ名
 		fgtext   = "";		// 表画面に表示中の文字列
 		bgtext   = "";		// 裏画面に表示中の文字列
 		font     = %[];		// [font]で指定するフォントデータ

@@ -260,7 +260,7 @@ function KAGWindow_config()
 // 数が多いと速度が低下したりメモリを消費しますので、必要以上に大きな数を指
 // 定しない方が良いでしょう。
 // laycount タグでシナリオ内でも変更できます。
-;numCharacterLayers = 3;
+;numCharacterLayers = 4;
 
 
 // ◆ 前景レイヤの左右中心位置指定
@@ -292,7 +292,7 @@ function KAGWindow_config()
 // ◆ 初期状態のメッセージレイヤの数
 // 前景レイヤと違って、0 を指定することはできません。これも必要な数だけ確保
 // するようにすべきです。laycount タグでシナリオ内でも変更できます。
-;numMessageLayers = 3;
+;numMessageLayers = 4;
 
 
 // ◆ 初期状態でメッセージレイヤを表示するかどうか
