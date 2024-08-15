@@ -28,7 +28,7 @@
 [endif]
 
 ; 実は APimage.tjsの中で必要なんだけどな…。
-[call storage=macro/TJSFunctions.ks]
+[call storage=TJSFunctions.ks]
 
 ;[ap_image_init]
 [macro name=ap_image_init]
@@ -49,7 +49,7 @@
 [macro name=ap_delimage]
 [if exp="mp.layer === void || mp.page === void || mp.page == 'both' || mp.name === void"]
 	; layer/pageいずれかが指定されていなかったらサブルーチンへ
-	[call storage=macro/Macro_APimage.ks target=*ap_delimage_sub]
+	[call storage=Macro_APimage.ks target=*ap_delimage_sub]
 [else]
 	; layer/page全てが指定されていたら、削除
 	[eval exp="mp.layerobj = kag.getLayerFromElm(mp)"]
@@ -63,7 +63,7 @@
 [macro name=ap_animstart]
 [if exp="mp.layer === void || mp.page === void || mp.page == 'both' || mp.name === void"]
 	; layer/pageいずれかが指定されていなかったらサブルーチンへ
-	[call storage=macro/Macro_APimage.ks target=*ap_animstart_sub]
+	[call storage=Macro_APimage.ks target=*ap_animstart_sub]
 [else]
 	[ap_wa * cond="mp.prefwait"]
 	; layer/page全てが指定されていたら、開始
@@ -79,7 +79,7 @@
 [eval exp="mp.immediate = true" cond="mp.immediate === void"]
 [if exp="mp.layer === void || mp.page === void || mp.page == 'both' || mp.name === void"]
 	; layer/pageいずれかが指定されていなかったらサブルーチンへ
-	[call storage=macro/Macro_APimage.ks target=*ap_animstop_sub]
+	[call storage=Macro_APimage.ks target=*ap_animstop_sub]
 [else]
 	; layer/page全てが指定されていたら、停止
 	[eval exp="mp.layerobj = kag.getLayerFromElm(mp)"]
@@ -92,7 +92,7 @@
 [macro name=ap_wa]
 [if exp="mp.layer === void || mp.page === void || mp.page == 'both' || mp.name === void"]
 	; layer/pageいずれかが指定されていなかったらサブルーチンへ
-	[call storage=macro/Macro_APimage.ks target=*ap_wa_sub]
+	[call storage=Macro_APimage.ks target=*ap_wa_sub]
 [else]
 	; layer/page全てが指定されていたら、終了待ち
 	[eval exp="mp.trignam = apimage_getTriggerName(mp)"]
@@ -156,7 +156,7 @@ function getAPimageHashAryFromElm(elm=%[]) {
 ; [char_ap_image name= page= apname= storage= dx= dy= width= height= target=]
 [macro name=char_ap_image]
 [if exp="mp.name === void"]
-	[call storage=macro/Macro_APimage.ks target=*char_ap_image_sub]
+	[call storage=Macro_APimage.ks target=*char_ap_image_sub]
 [else]
 	[eval exp="mp.layer = chardatas_obj.getLayer(mp.name)"]
 	[eval exp="mp.storage = findASDStorage(mp.storage, mp.name)"]
@@ -168,7 +168,7 @@ function getAPimageHashAryFromElm(elm=%[]) {
 ; [char_ap_delimage name= page= apname=]
 [macro name=char_ap_delimage]
 [if exp="mp.name === void"]
-	[call storage=macro/Macro_APimage.ks target=*char_ap_delimage_sub]
+	[call storage=Macro_APimage.ks target=*char_ap_delimage_sub]
 [else]
 	[eval exp="mp.layer = chardatas_obj.getLayer(mp.name)"]
 	[eval exp="mp.apname = findASDStorage(mp.apname, mp.name)"]
@@ -179,14 +179,14 @@ function getAPimageHashAryFromElm(elm=%[]) {
 ; キャラに対して部分アニメーション(複数指定可)を開始する
 ; [char_ap_animstart_ary name= page= apstart=]
 [macro name=char_ap_animstart_ary]
-[call storage=macro/Macro_APimage.ks target=*char_ap_animstart_ary_sub]
+[call storage=Macro_APimage.ks target=*char_ap_animstart_ary_sub]
 [endmacro]
 
 ; キャラに対して部分アニメーション一つを開始する
 ; [char_ap_animstart name= page= apname= target=]
 [macro name=char_ap_animstart]
 [if exp="mp.name === void"]
-	[call storage=macro/Macro_APimage.ks target=*char_ap_animstart_sub]
+	[call storage=Macro_APimage.ks target=*char_ap_animstart_sub]
 [else]
 	[eval exp="mp.layer = chardatas_obj.getLayer(mp.name)"]
 	[eval exp="mp.apname = findASDStorage(mp.apname, mp.name)"]
@@ -197,7 +197,7 @@ function getAPimageHashAryFromElm(elm=%[]) {
 ; キャラの部分アニメーションを停止する
 [macro name=char_ap_animstop]
 [if exp="mp.name === void"]
-	[call storage=macro/Macro_APimage.ks target=*char_ap_animstop_sub]
+	[call storage=Macro_APimage.ks target=*char_ap_animstop_sub]
 [else]
 	[eval exp="mp.layer = chardatas_obj.getLayer(mp.name)"]
 	[eval exp="mp.apname = findASDStorage(mp.apname, mp.name)"]
@@ -208,7 +208,7 @@ function getAPimageHashAryFromElm(elm=%[]) {
 ; キャラの部分アニメーションの終了を待つ
 [macro name=char_ap_wa]
 [if exp="mp.name === void"]
-	[call storage=macro/Macro_APimage.ks target=*char_ap_wa_sub]
+	[call storage=Macro_APimage.ks target=*char_ap_wa_sub]
 [else]
 	[eval exp="mp.layer = chardatas_obj.getLayer(mp.name)"]
 	[eval exp="mp.apname = findASDStorage(mp.apname, mp.name)"]

@@ -55,14 +55,14 @@
 ; CharDatasクラスから派生させる。この時点でpluginになってる…ハズ。
 
 ; 前提マクロの読み込み
-[call storage="macro/Macro_APimage.ks"]
-[call storage="macro/Macro_CharDatas.ks"]
+[call storage="Macro_APimage.ks"]
+[call storage="Macro_CharDatas.ks"]
 ; char_motion_startにはLayerMotionPlugin.ksが必要
-[call storage="macro/LayerMotionPlugin.ks"]
-[call storage="macro/TJSFunctions.ks"]
+[call storage="LayerMotionPlugin.ks"]
+[call storage="TJSFunctions.ks"]
 
 ; FaceWindowPlugin は存在すれば読み込む
-[call storage="macro/FaceWindowPlugin.ks" cond="Storages.isExistentStorage('macro/FaceWindowPlugin.ks')"]
+[call storage="FaceWindowPlugin.ks" cond="Storages.isExistentStorage('FaceWindowPlugin.ks')"]
 
 
 [iscript]
@@ -750,7 +750,7 @@ class CharLayers extends CharDatas {
 [eval exp="chardatas_obj.setData( mp.name, 'images_param', mp.images_param )"]
 [eval exp="chardatas_obj.setPartStorages( mp.name, mp.pose, mp.storage )"]
 [eval exp="chardatas_obj.setPartCoordinates( mp.name, mp.pose, mp.coordinates )" cond="mp.coordinates !== void"]
-[call storage="macro/Macro_CharLayers.ks" target="*images_sub"]
+[call storage="Macro_CharLayers.ks" target="*images_sub"]
 ; time=引数を渡さないようにするために、*でなくて一つづつ指定。
 [setTimeEffect layer=%layer page=%page obj="char"]
 ; 表示状態をvisible(def=表示)に。
@@ -773,7 +773,7 @@ class CharLayers extends CharDatas {
 [macro name="char_visible"]
 [eval exp="mp.visible = true" cond="mp.visible === void"]
 [eval exp="mp.page = 'both'"  cond="mp.page === void"]
-[call storage="macro/Macro_CharLayers.ks" target="*char_visible_sub"]
+[call storage="Macro_CharLayers.ks" target="*char_visible_sub"]
 [endmacro]
 
 
@@ -782,7 +782,7 @@ class CharLayers extends CharDatas {
 [macro name="char_clear_all"]
 [eval exp="mp.clear = true" cond="mp.clear === void"]
 [clickskip enabled=true cond="kag.skipMode<=1"]
-[call storage=macro/Macro_CharLayers.ks target="*char_clear_all_sub" cond="mp.clear"]
+[call storage=Macro_CharLayers.ks target="*char_clear_all_sub" cond="mp.clear"]
 [clickskip enabled=true]
 [endmacro]
 
@@ -818,7 +818,7 @@ class CharLayers extends CharDatas {
 ; [char_disp name=xxx ...] を [xxx ...] で実現するためのマクロ登録ルーチン
 ; [xxx ...]が登録されていなかった時だけ登録する。[char_disp]から無条件に
 ; 呼ばれていて、何度でも上書きしてしまうため。
-[call storage=macro/Macro_CharLayers.ks target="*char_reg_sub" cond="kag.conductor.macros[mp.name] === void"]
+[call storage=Macro_CharLayers.ks target="*char_reg_sub" cond="kag.conductor.macros[mp.name] === void"]
 [endmacro]
 
 
@@ -1092,7 +1092,7 @@ class CharLayers extends CharDatas {
 	; back/foreは同じサイズのハズだし、多分動くハズ。
 	[backlay cond="mp.trans"]
 
-	[call storage="macro/Macro_CharLayers.ks" target="*char_erase_sub"]
+	[call storage="Macro_CharLayers.ks" target="*char_erase_sub"]
 
 	; 引数は全部渡す
 	[eval exp="mp.align = getValueOfCharLayers(mp.align, 'erasealign')"]
@@ -1123,7 +1123,7 @@ class CharLayers extends CharDatas {
 [else]
 	[eval exp="mp.accel = -getValueOfCharLayers(mp.accel, 'alignaccel')"]
 	; toに応じて全キャラの最終位置を決める
-	[call storage=macro/Macro_CharLayers.ks target=*char_erase_to_sub]
+	[call storage=Macro_CharLayers.ks target=*char_erase_to_sub]
 
 	[if exp="mp.fade"]
 		; 移動する。フェードアウトするなら移動終了を待たない
@@ -1246,7 +1246,7 @@ class CharLayers extends CharDatas {
 
 ; popupcharsの内部ルーチン。
 [macro name="popupchars_internal"]
-[call storage="macro/Macro_CharLayers.ks" target="*popupchars_sub"]
+[call storage="Macro_CharLayers.ks" target="*popupchars_sub"]
 [endmacro]
 
 
@@ -1257,7 +1257,7 @@ class CharLayers extends CharDatas {
 ; mp.names配列に削除するキャラクタの配列を格納。name=が未指定なら全キャラが対象
 [eval exp="mp.names = chardatas_obj.getDispChars()"]
 [eval exp="mp.names.split( / /, mp.name )" cond="mp.name !== void"]
-[call storage="macro/Macro_CharLayers.ks" target="*char_align_sub"]
+[call storage="Macro_CharLayers.ks" target="*char_align_sub"]
 ; waitが指定されてたら移動終了を待つ
 [char_align_wait name=%name cond="mp.wait === void || mp.wait"]
 [endmacro]
@@ -1267,7 +1267,7 @@ class CharLayers extends CharDatas {
 [macro name="char_align_wait"]
 [eval exp="mp.names = chardatas_obj.getDispChars()"]
 [eval exp="mp.names.split( / /, mp.name )" cond="mp.name !== void"]
-[call storage="macro/Macro_CharLayers.ks" target="*char_align_wait_sub"]
+[call storage="Macro_CharLayers.ks" target="*char_align_wait_sub"]
 [endmacro]
 
 
@@ -1375,7 +1375,7 @@ class CharLayers extends CharDatas {
 [macro name="char_motion_start"]
 [eval exp="mp.names = chardatas_obj.getDispChars()"]
 [eval exp="mp.names.split(/ /, mp.name)" cond="mp.name !== void"]
-[call storage=macro/Macro_CharLayers.ks target=*char_motion_start_sub]
+[call storage=Macro_CharLayers.ks target=*char_motion_start_sub]
 [endmacro]
 
 
@@ -1407,7 +1407,7 @@ class CharLayers extends CharDatas {
 
 ; 未使用のモーションを停止する。transの後などでキャラが削除された時に使用
 [macro name=char_unusedmotion_stop]
-[call storage="macro/Macro_CharLayers.ks" target="*motionstop_on_unusedlayer"]
+[call storage="Macro_CharLayers.ks" target="*motionstop_on_unusedlayer"]
 [endmacro]
 
 
@@ -1443,7 +1443,7 @@ class CharLayers extends CharDatas {
 [macro name=char_seteachopt]
 [eval exp="mp.names = chardatas_obj.getDispChars()"]
 [eval exp="mp.names.split(/ /, mp.name)" cond="mp.name !== void"]
-[call storage=macro/Macro_CharLayers.ks target=*char_seteachopt_sub]
+[call storage=Macro_CharLayers.ks target=*char_seteachopt_sub]
 [endmacro]
 
 

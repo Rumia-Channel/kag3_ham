@@ -6,8 +6,8 @@
 ;			・title/buttonをbgからの相対座標で指定できるように変更
 ;
 ;
-@call storage="macro/TJSFunctions.ks"
-@call storage="macro/KLayers.ks"
+@call storage="TJSFunctions.ks"
+@call storage="KLayers.ks"
 ;
 ; KLayerに options をつけよう。「これに書かれたものはセーブされる」ように。
 ; KLayerPlugin、addにobjectをreturnするよう
@@ -102,7 +102,7 @@ class SelectButton extends KAnimButtonLayer
 			releasestorage = window.conductor.curStorage;
 		.SelectPlugin_obj.selectendstorage = releasestorage;
 		.SelectPlugin_obj.selectendtarget  = releasetarget;
-		releasestorage   = "macro/SelectPlugin.ks";
+		releasestorage   = "SelectPlugin.ks";
 		releasetarget    = "*SelectPlugin_common";
 
 		super.onMouseUp(...);

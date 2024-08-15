@@ -18,7 +18,7 @@
 ;			修正
 
 ; 前提クラスInterpolation.ksの読み込み
-[call storage="macro/Interpolation.ks"]
+[call storage="Interpolation.ks"]
 
 [iscript]
 
@@ -747,7 +747,7 @@ kag.addPlugin(global.layermotions_obj = new LayerMotions());
 ; layer, page, name はvoidでもよい
 [macro name="motion_wait"]
 [eval exp="mp.canskip=true" cond="mp.canskip === void"]
-[call storage=macro/LayerMotionPlugin.ks target=*motion_wait_sub]
+[call storage=LayerMotionPlugin.ks target=*motion_wait_sub]
 [motion_stop *]
 [endmacro]
 

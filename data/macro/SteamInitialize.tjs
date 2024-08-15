@@ -1,0 +1,4 @@
+/* startup.tjs とか Initialize.tjs とか return 一発で実行から即抜けられる場所に配置する */
+var APPID = 0; // SteamのAPPIDの変数（別に直接埋め込みでも問題はないです）
+Plugins.link("krkrsteam.dll");
+if (Steam.RestartAppIfNecessary(APPID)) return System.terminate(1); // Steamクライアント経由で起動させる

@@ -26,7 +26,7 @@
 ; 2012/05/27	0.1	・初期リリース
 
 
-[call storage="macro/TJSFunctions.ks"]
+[call storage="TJSFunctions.ks"]
 
 [iscript]
 

@@ -10,6 +10,10 @@ var kagVersion = "3.32 stable rev. 2";
 
 var dm = Debug.message; // これで dm("message"); でコンソールに message を表示できる
 
+/*
+	STEAM有効時コメントアウトを外す
+*/
+//Scripts.execStorage("SteamInitialize.tjs");
 
 /*
 	デフォルトの「捕捉されない例外」ハンドラ
@@ -64,6 +68,7 @@ Storages.addAutoPath("bgimage/"); // 背景画像フォルダ
 Storages.addAutoPath("scenario/"); // シナリオフォルダ
 Storages.addAutoPath("image/"); // そのほかの画像フォルダ
 Storages.addAutoPath("system/"); // システムフォルダ
+Storages.addAutoPath("macro/"); // マクロフォルダ
 
 // パッチアーカイブの検索と使用
 // もしこれらの名前を持ったアーカイブが実行可能ファイルと

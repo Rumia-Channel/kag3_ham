@@ -2,5 +2,5 @@
 Plugins.link("layerExImage.dll");
 
 // 「夕方」とか「夜」とかの環境により画面の明るさや色合いを変える寄生虫
-KAGLoadScript( "macro/TimeEffect.tjs" );
+KAGLoadScript( "TimeEffect.tjs" );
 
