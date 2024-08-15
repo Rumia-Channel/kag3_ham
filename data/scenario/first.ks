@@ -99,16 +99,18 @@
 ;===============================================================================
 ;===============================================================================
 @iscript
-  Scripts.execStorage("macro/MoveMouseCursorPlugin.tjs");
+  Scripts.execStorage("MoveMouseCursorPlugin.tjs");
 @endscript
-[call storage="macro/TJSFunctions.ks"]
-[call storage="macro/KLayers.ks"]
-[call storage=macro/NameWindowPlugin.ks]
-[call storage="macro/Macro_CharLayers.ks"]
-[call storage="macro/AltEnterFullScreen.ks"]
-[call storage="macro/YesNoDialogLayer.ks"]
-[call storage="macro/SelectPlugin.ks"]
-[call storage="macro/WindowResizable.ks"]
+[call storage="alphamovie.ks"]
+;[call storage="Macro_Steam.ks"]
+[call storage="TJSFunctions.ks"]
+[call storage="KLayers.ks"]
+[call storage=NameWindowPlugin.ks]
+[call storage="Macro_CharLayers.ks"]
+[call storage="AltEnterFullScreen.ks"]
+[call storage="YesNoDialogLayer.ks"]
+[call storage="SelectPlugin.ks"]
+[call storage="WindowResizable.ks"]
 ;===============================================================================
 ;===============================================================================
 ; 外部スクリプトとマクロここまで
@@ -116,7 +118,7 @@
 ; この辺からユーザー定義
 ;===============================================================================
 ;===============================================================================
-;[call storage="macro/BHMMacros.ks"]
+;[call storage="BHMMacros.ks"]
 ;===============================================================================
 ;===============================================================================
 ; マクロ定義ここまで
