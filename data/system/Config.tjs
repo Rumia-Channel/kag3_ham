@@ -376,7 +376,7 @@ function Menu_visible_config()
 
 
 // ◆ 「システム > 次の選択肢/未読まで進む」または「次の選択肢まで進む」
-;skipToNextStopMenuItem.visible = false;
+;skipToNextStopMenuItem.visible = true;
 
 
 // ◆ 「システム > 自動的に読み進む」
@@ -388,15 +388,15 @@ function Menu_visible_config()
 
 
 // ◆ 「システム > 前に戻る」
-;goBackMenuItem.visible = false;
+;goBackMenuItem.visible = true;
 
 
 // ◆ 「システム > 最初に戻る」
-;goToStartMenuItem.visible = false;
+;goToStartMenuItem.visible = true;
 
 
 // ◆ 「文字表示」
-;characterMenu.visible = false;
+;characterMenu.visible = true;
 
 
 // ◆ 「文字表示 > 表示速度 > ページ末まで一気に」
@@ -430,11 +430,11 @@ function Menu_visible_config()
 
 
 // ◆ 「画面」
-;displayMenu.visible = false;
+;displayMenu.visible = true;
 
 
 // ◆ 「ヘルプ」
-;helpMenu.visible = false;
+;helpMenu.visible = true;
 
 
 // ◆ 「ヘルプ > 目次 ...」

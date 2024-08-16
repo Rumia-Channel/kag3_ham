@@ -56,6 +56,13 @@ function KAGWindow_createMenus()
 
 	systemMenu.add(this.exitMenuItem = new KAGMenuItem(this, "終了(&X)", 0, onExitMenuItemClick, false));
 
+	menu.add(this.displayMenu = new KAGMenuItem(this, "画面(&V)", 0, void, false));
+
+		displayMenu.add(this.windowedMenuItem = new KAGMenuItem(this, "ウィンドウ表示(&W)", 1,
+			onWindowedMenuItemClick, false));
+		displayMenu.add(this.fullScreenMenuItem = new KAGMenuItem(this, "フルスクリーン(&F)", 1,
+			onFullScreenMenuItemClick, false));
+
 	menu.add(this.characterMenu = new KAGMenuItem(this, "文字表示(&C)", 0, void, false));
 
 		characterMenu.add(this.chSpeedMenu = new KAGMenuItem(this, "表示速度(&C)", 0, void, false));
@@ -119,12 +126,6 @@ function KAGWindow_createMenus()
 		menu.add(this.storeMenu = new KAGMenuItem(this, "栞をはさむ(&M)", 0, onStoreMenuClick, false));
 	}
 
-	menu.add(this.displayMenu = new KAGMenuItem(this, "画面(&V)", 0, void, false));
-
-		displayMenu.add(this.windowedMenuItem = new KAGMenuItem(this, "ウィンドウ表示(&W)", 1,
-			onWindowedMenuItemClick, false));
-		displayMenu.add(this.fullScreenMenuItem = new KAGMenuItem(this, "フルスクリーン(&F)", 1,
-			onFullScreenMenuItemClick, false));
 
 	menu.add(this.helpMenu = new KAGMenuItem(this, "ヘルプ(&H)", 0, void, false));
 

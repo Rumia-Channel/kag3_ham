@@ -1,0 +1,45 @@
+CtrlSkip概要
+	CtrlSkip は、吉里吉里/KAG に Ctrlキー押しでメッセージスキップする
+	機能を追加するプラグインである。クイックスキップも実装した。
+	今の吉里吉里/KAG にはそういう機能がないので作った。
+
+使い方：
+	first.ks の先頭あたりで、以下のように呼び出す。
+		[call storage="CtrlSkip.ks"]
+	これでCtrlキー押しでメッセージスキップできるようになる。
+	
+
+タグリファレンス：
+[ctrlskip enabled= addkey= delkey= quickflg=]
+説明：	CtrlSkipのオプションを設定する
+引数：
+	enabled=	CtrlSkipを有効にするかどうか。
+		true	有効にする(def)
+		false	無効にする。無効にするとKAGデフォルトの動作となる。
+	addkey=		CtrlSkipが反応するキーを追加する場合に指定。
+			例えばF1キーでもスキップさせるなら、
+			[ctrlskip addkey=112]とする。キーコードは以下参照。
+			http://devdoc.kikyou.info/tvp/docs/kr2doc/contents/KeyCodes.html
+	delkey=		CtrlSkipが反応するキーを削除する。
+			DefではVK_CONTROL,VK_SPACE,VK_ENTERが対象。
+	quickflg=	スキップ用のキーを押すとすぐにスキップを開始するか
+			どうか。KAGデフォルトではキーリピートに任せてスキップが
+			少し遅いので、早くするために使う。
+		true	すぐskip開始する(def)
+		false	KAGのデフォルト動作にする
+
+
+備考：
+	吉里吉里 2.30くらいから、Config.tjs の function KAGWindow_config()に
+	supportReadingKey = VK_CONTROL;
+	と書いておくと、それだけで Ctrl キーでスキップできるようになった。
+	あ、でも Space と同時に Ctrl もスキップキーに使いたいとか、クイック
+	スキップしたいとかの希望に添うためには、このプラグインが必要。
+
+四方山：
+	聞くところによると、「Ctrlキーは他のキーと組み合わせて使うものだから、
+	そういうキー単体に機能を割り当てるのは如何なものか」というポリシーが
+	あって、吉里吉里デフォルトではCtrlキーに機能が割り当てられていないの
+	だそうだ。なるほど納得。
+	…でもまぁ、一般的にはもうCtrlキーがスキップだって決まっちゃっている
+	のだが。
