@@ -102,6 +102,8 @@
   Scripts.execStorage("MoveMouseCursorPlugin.tjs");
 @endscript
 [call storage="alphamovie.ks"]
+[call storage="eruby.ks"]
+[call storage="CtrlSkip.ks"]
 ;[call storage="Macro_Steam.ks"]
 [call storage="TJSFunctions.ks"]
 [call storage="KLayers.ks"]
